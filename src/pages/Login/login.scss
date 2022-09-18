@@ -1,0 +1,94 @@
+.loginContainer {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ced0d6;
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 560px;
+    min-height: 400px;
+    min-width: 560px;
+    background-color: #00104e;
+    border-radius: 15px;
+    padding: 25px;
+
+    .innerWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 100%;
+      gap: 30px;
+    }
+
+    .title {
+      text-align: center;
+      font-weight: 300;
+      text-transform: uppercase;
+      align-self: center;
+      justify-content: center;
+      margin-bottom: 35px;
+      color: #fff;
+    }
+
+    .illustration {
+      img {
+        height: 200px;
+        width: auto;
+      }
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-self: center;
+      justify-content: space-between;
+      height: 100%;
+      gap: 15px;
+
+      .inputArea {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .inputGroup {
+          .inputCaption {
+            color: rgb(230, 227, 227);
+            font-size: 12px;
+            font-weight: 300;
+            margin-bottom: 5px;
+          }
+        }
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+
+        &:focus {
+          outline: none;
+          background-color: #2d458c;
+          color: rgb(230, 227, 227);
+        }
+      }
+
+      input[type="button"] {
+        background-color: #9c5910;
+        color: rgb(230, 227, 227);
+        border: 0.5px solid #fff;
+        border-radius: 10px;
+        height: 40px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #2d458c;
+        }
+      }
+    }
+  }
+}

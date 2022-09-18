@@ -1,0 +1,60 @@
+.tableContainer {
+  h3 {
+    margin-bottom: 10px;
+  }
+}
+
+.inputFileCustom {
+  input[type="file"] {
+    display: none;
+  }
+
+  label {
+    padding: 20px 10px;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+}
+.filesUploaded {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: #00104e;
+  border-radius: 10px;
+  padding: 10px;
+  width: 350px;
+}
+.file {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.fileIcon {
+  color: #fff;
+}
+.fileText {
+  font-weight: 300;
+  color: #fff;
+  padding-left: 15px;
+  align-self: flex-start;
+  width: 100%;
+}
+.fileIconDelete {
+  background-color: rgba(201, 201, 201, 0.5);
+  border-radius: 15px;
+  font-size: 15px !important;
+  justify-self: flex-end;
+  &:hover {
+    background-color: red;
+    cursor: pointer;
+  }
+}

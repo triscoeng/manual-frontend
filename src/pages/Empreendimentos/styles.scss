@@ -1,0 +1,49 @@
+.empreendimentosContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+  box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+  border-radius: 10px;
+
+  h2 {
+    padding: 15px;
+    font-weight: 300;
+    border-bottom: 0.5px solid rgba(128, 128, 128, 0.13);
+  }
+
+  .tableContainer {
+    padding: 10px;
+    height: 80vh;
+
+    .table {
+      .thead {
+        background-color: #00104e;
+      }
+      .actionIcons {
+        color: #fff;
+        cursor: pointer;
+        margin: 2px;
+        font-size: 30px;
+        padding: 5px;
+        border-radius: 5px;
+
+        &:hover {
+          color: #00104e;
+        }
+      }
+
+      .green {
+        background-color: #6dc75e;
+      }
+
+      .yellow {
+        background-color: #ffee4a;
+      }
+
+      .red {
+        background-color: #d6675a;
+      }
+    }
+  }
+}

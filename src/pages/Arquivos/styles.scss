@@ -1,0 +1,36 @@
+.filesWrapper {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+
+  .file {
+    color: #fff;
+    margin: 5px 15px;
+    padding: 10px;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    width: 300px;
+    flex-wrap: wrap;
+    flex-direction: column;
+    border-radius: 1px;
+    background-color: #207AF7;
+    -webkit-box-shadow: 0px 0px 0px -1px #0E356B;
+    box-shadow: 0px 0px 0px -1px #0E356B;
+
+    &:hover {
+      -webkit-box-shadow: 8px 8px 0px -1px #0E356B;
+      box-shadow: 5px 5px 0px -1px #0E356B;
+      transition: box-shadow 0.2s ease-out;
+    }
+
+    .qrCode {
+      background-color: #1654AB;
+      margin-top: 5px;
+      padding: 5px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+}

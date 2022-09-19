@@ -41,8 +41,8 @@ const Empreendimentos = () => {
         },
       })
       .then(async (r) => {
-        setIsLoading(false);
         setRows(r.data);
+        setIsLoading(false);
       })
       .finally(() => {
         setIsLoading(false);

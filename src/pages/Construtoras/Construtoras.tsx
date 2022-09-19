@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LayoutContext } from "../../context/LayoutContext";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Box from "@mui/material/Box";
@@ -21,8 +20,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 import "./construtoras.scss";
-import { ConstructionOutlined } from "@mui/icons-material";
-import { useAsync } from "react-select/async";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -97,20 +94,20 @@ const Construtoras = () => {
 
   const getConstrutoraList = async () => {
     setLoading(true)
-    const token: any = localStorage.getItem("token");
     await axios
       .get(`${process.env.REACT_APP_APIURL}/construtoras`, {
         headers: {
-          authorization: token,
+          'authorization': localStorage.getItem("token") as any,
         },
       })
-      .then((r) => {
+      .then(({ data }) => {
+        console.log(data);
+        setRows(data);
         setLoading(false)
-        setRows(r.data);
       })
       .catch((err) => {
-        setLoading(false)
         toast.error(err.message);
+        setLoading(false)
       });
   };
 
@@ -209,10 +206,7 @@ const Construtoras = () => {
 
   useEffect(() => {
     layoutContext.setNavbar_title("Lista de Construtoras Cadastradas");
-
-    return () => {
-      getConstrutoraList();
-    };
+    getConstrutoraList();
   }, [updateTrigger]);
 
   return (
@@ -251,7 +245,7 @@ const Construtoras = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading ? <CircularProgress sx={{ alignSelf: "center", justifySelf: "center" }} /> : ""}
+            {loading ? <CircularProgress /> : ""}
             {(rowsPerPage > 0
               ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : rows

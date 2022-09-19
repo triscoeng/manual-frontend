@@ -3,11 +3,11 @@ import {
   CircularProgress,
   FilledInput,
   FormControl,
-  Input,
   InputLabel,
-  OutlinedInput,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import AsyncSelect from "react-select/async"
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import FilePresentIcon from "@mui/icons-material/FilePresent";
@@ -15,7 +15,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 import "./styles.scss";
-import Select from "react-select";
+import { borderBottom } from "@mui/system";
 
 const EmpreendimentosCadastro = () => {
   const [uploadedFiles, setUploadedFiles]: any = useState([]);
@@ -27,7 +27,7 @@ const EmpreendimentosCadastro = () => {
 
   const [construtorasData, setConstrutorasData] = useState([]);
 
-  
+
   const handleSubmitRequest = async (data: any) => {
     setIsLoading(true);
     await axios
@@ -44,7 +44,7 @@ const EmpreendimentosCadastro = () => {
         toast.error(err.message);
       })
       .finally(() => {
-        setIsLoading(true);
+        setIsLoading(false);
       });
   };
 
@@ -95,7 +95,7 @@ const EmpreendimentosCadastro = () => {
   };
 
   const getConstrutorasData = async () => {
-    axios
+    await axios
       .get(process.env.REACT_APP_APIURL + "/construtoras/names", {
         headers: {
           authorization: localStorage.getItem("token") as any,
@@ -108,24 +108,84 @@ const EmpreendimentosCadastro = () => {
 
   useEffect(() => {
     return () => {
+      setIsLoading(true);
       getConstrutorasData();
+      setIsLoading(false);
     };
   }, []);
+
+  const customStyles = {
+    option: (provided: any, state: any) => ({
+      ...provided,
+      borderBottom: "1px dotted pink",
+      color: state.isSelected ? "#fff" : "#0001a6",
+      padding: 10,
+    }),
+    control: (provided: any, state: any) => {
+      return {
+        ...provided,
+        backgroundColor: state.isDisabled ? "#00104e" : "#FFF",
+      };
+    },
+    singleValue: (provided: any, state: any) => {
+      return {
+        ...provided,
+        color: state.isDisabled ? "#FFF" : "#00104e",
+        fontWeight: "700",
+      };
+    },
+    // menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
+  };
+
+  const mapResponseToValuesAndLabels = (data: any) => ({
+    value: data.id,
+    label: data.nome,
+  });
+
+  const getConstrutoraDataAsync: any = async (searchData: any, callback: any) => {
+    const data = await axios.get(process.env.REACT_APP_APIURL + "/construtoras/names", {
+      headers: {
+        authorization: localStorage.getItem("token") as any,
+      }
+    })
+      .then(result => result.data.map(mapResponseToValuesAndLabels))
+      .then(final => final.filter((i: any) => i.label.toLowerCase().includes(searchData.toLowerCase())))
+    callback(data);
+    return data
+  }
 
   return (
     <div className="contentContainer">
       <h2>Cadastro de Empreendimento:</h2>
       <div className="tableContainer">
         <form action="#" encType="multipart/form-data">
-          <FormControl fullWidth sx={{ m: 1 }} variant="filled">
-            <Select
-              menuPortalTarget={document.body}
-              styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-              options={construtorasData.map((construtora: any) => ({
-                label: construtora.nome,
-                value: construtora.id,
-              }))}
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <AsyncSelect
               onChange={(opt: any) => setConstrutoraSelected(opt.value)}
+              loadOptions={getConstrutoraDataAsync}
+              defaultOptions={true}
+              placeholder="Escolha a Construtora"
+              styles={{
+                valueContainer: () => (
+                  { height: '55px', 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  paddingLeft: '5px'
+                }),
+                control: (provided: any, state: any) => {
+                  return {
+                    ...provided,
+                    backgroundColor: '#F0F0F0',
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+                  }
+                },
+                menu: (base: any) => {
+                  return {
+                    ...base,
+                    zIndex: 999
+                  }
+                }
+              }}
             />
           </FormControl>
           <FormControl fullWidth sx={{ m: 1 }} variant="filled">

@@ -3,13 +3,13 @@ import QRCodeStyling from "qr-code-styling";
 
 const QrCodeGenerator = ({ data }: any) => {
   console.log(
-    process.env.REACT_APP_ROOT_URL + `/download/id=${data.id}&hash=${data.hash}`
+    process.env.PUBLIC_URL + `/download/id=${data.id}&hash=${data.hash}`
   );
   const qrCode = new QRCodeStyling({
     width: 450,
     height: 450,
     data:
-      process.env.REACT_APP_ROOT_URL +
+      process.env.PUBLIC_URL +
       `/download/id=${data.id}&hash=${data.hash}`,
     margin: 0,
     qrOptions: {

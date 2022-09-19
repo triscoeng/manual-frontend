@@ -159,11 +159,13 @@ const EmpreendimentosSingle = () => {
   };
 
   const selectedCompanyIndex = () => {
-    let el = construtorasList.find(
-      (i: any) => i.id === empreendimentoData.idConstrutora
-    );
-    const volta = { label: el.nome, value: el.id };
-    return volta;
+    if (construtorasList) {
+      let el = construtorasList.find(
+        (i: any) => i.id === empreendimentoData.idConstrutora
+      );
+      const volta = { label: el.nome, value: el.id };
+      return volta;
+    }
   };
 
   const customStyles = {
@@ -225,22 +227,23 @@ const EmpreendimentosSingle = () => {
           <div className="topWrapper">
             <div className="inputGroup">
               <p className="inputSpan">Construtora:</p>
-              {empreendimentoData ? <Select
-                onChange={(e: any) => {
-                  setEditedValues((prev: any) => ({
-                    ...prev,
-                    ["idConstrutora"]: e.value,
-                  }));
-                }}
-                styles={customStyles}
-                isDisabled={!editMode ? true : false}
-                defaultValue={selectedCompanyIndex()}
-                filterOption={filterOptions}
-                options={construtorasList.map((construtora: any) => ({
-                  label: construtora.nome,
-                  value: construtora.id,
-                }))}
-              /> : ""}
+              {empreendimentoData ?
+                <Select
+                  onChange={(e: any) => {
+                    setEditedValues((prev: any) => ({
+                      ...prev,
+                      ["idConstrutora"]: e.value,
+                    }));
+                  }}
+                  styles={customStyles}
+                  isDisabled={!editMode ? true : false}
+                  defaultValue={selectedCompanyIndex()}
+                  filterOption={filterOptions}
+                  options={construtorasList.map((construtora: any) => ({
+                    label: construtora.nome,
+                    value: construtora.id,
+                  }))}
+                /> : ""}
             </div>
             <div className="inputGroup">
               <p className="inputSpan">Nome Do Imóvel:</p>
@@ -262,7 +265,6 @@ const EmpreendimentosSingle = () => {
                 disabled={!editMode}
               />
             </div>
-            {loading ? <CircularProgress /> : ""}
           </div>
           <h3>Arquivos Cadastrados:</h3>
           {!editMode ? (

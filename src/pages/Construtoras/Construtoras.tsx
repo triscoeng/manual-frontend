@@ -16,12 +16,13 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { toast } from "react-toastify";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 import "./construtoras.scss";
 import { ConstructionOutlined } from "@mui/icons-material";
+import { useAsync } from "react-select/async";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -74,6 +75,7 @@ const Construtoras = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [updateTrigger, setUpdateTrigger] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -94,8 +96,8 @@ const Construtoras = () => {
   };
 
   const getConstrutoraList = async () => {
+    setLoading(true)
     const token: any = localStorage.getItem("token");
-
     await axios
       .get(`${process.env.REACT_APP_APIURL}/construtoras`, {
         headers: {
@@ -103,9 +105,11 @@ const Construtoras = () => {
         },
       })
       .then((r) => {
+        setLoading(false)
         setRows(r.data);
       })
       .catch((err) => {
+        setLoading(false)
         toast.error(err.message);
       });
   };
@@ -247,6 +251,7 @@ const Construtoras = () => {
             </TableRow>
           </TableHead>
           <TableBody>
+            {loading ? <CircularProgress sx={{ alignSelf: "center", justifySelf: "center" }} /> : ""}
             {(rowsPerPage > 0
               ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : rows
@@ -259,21 +264,16 @@ const Construtoras = () => {
                 <TableCell align="center">{row.telefone}</TableCell>
                 <TableCell align="center">{row.email}</TableCell>
                 <TableCell align="center">
-                  <div className="">
-                    {/* <Link to={`./${row.id}`} style={{ textDecoration: "none" }}>
+                  <Button
+                    onClick={() => navigate(`./${row.id}`)}
+                    startIcon={
                       <VisibilityIcon className="actionIcons green" />
-                    </Link> */}
-                    <Button
-                      onClick={() => navigate(`./${row.id}`)}
-                      startIcon={
-                        <VisibilityIcon className="actionIcons green" />
-                      }
-                    />
-                    <Button
-                      onClick={() => handleDelete(row.id) as any}
-                      startIcon={<DeleteIcon className="actionIcons red" />}
-                    />
-                  </div>
+                    }
+                  />
+                  <Button
+                    onClick={() => handleDelete(row.id) as any}
+                    startIcon={<DeleteIcon className="actionIcons red" />}
+                  />
                 </TableCell>
               </TableRow>
             ))}

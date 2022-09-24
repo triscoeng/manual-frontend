@@ -288,7 +288,7 @@ const EmpreendimentosSingle = () => {
           )}
           <div className="empreendimento_fileswrapper">
             {empreendimentoData.Arquivos.map((file: any, index: any) => (
-              <div className="fileCard">
+              <div className="fileCard" key={index}>
                 <p className="">Arquivo {index + 1}</p>
                 <p className="fileName">{file.nomeArquivo}</p>
                 <div className="filewrapper_bottom">
@@ -358,7 +358,6 @@ const EmpreendimentosSingle = () => {
                   p: 4,
                 }}
               >
-                <QrCodeGenerator data={selectedQrCode} />
               </Box>
             </Modal>
           </div>

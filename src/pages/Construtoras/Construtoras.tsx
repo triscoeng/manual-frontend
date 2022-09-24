@@ -20,6 +20,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 import "./construtoras.scss";
+import { Link } from "react-router-dom";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -257,17 +258,13 @@ const Construtoras = () => {
                 <TableCell align="center">{row.nomeContato}</TableCell>
                 <TableCell align="center">{row.telefone}</TableCell>
                 <TableCell align="center">{row.email}</TableCell>
-                <TableCell align="center">
-                  <Button
-                    onClick={() => navigate(`./${row.id}`)}
-                    startIcon={
-                      <VisibilityIcon className="actionIcons green" />
-                    }
-                  />
-                  <Button
-                    onClick={() => handleDelete(row.id) as any}
-                    startIcon={<DeleteIcon className="actionIcons red" />}
-                  />
+                <TableCell align="center" >
+                  <Link to={`./${row.id}`}>
+                    <VisibilityIcon className="actionIcons green" />
+                  </Link>
+                  <Link onClick={() => handleDelete(row.id)} to={''}>
+                    <DeleteIcon className="actionIcons red" />
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

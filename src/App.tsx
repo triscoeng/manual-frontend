@@ -15,6 +15,8 @@ import EmpreendimentosSingle from "./pages/EmpreendimentosSingle/Empreendimentos
 import EmpreendimentosCadastro from "./pages/EmpreendimentosCadastro/EmpreendimentosCadastro";
 import DownloadFileRoute from "./utils/DownloadFileRoute";
 import Arquivos from "./pages/Arquivos/Arquivos";
+import ViewQrCode from "./pages/Qrcode/view/ViewQrCode";
+import CreateQrCode from "./pages/Qrcode/create/CreateQrCode";
 
 function App() {
   return (
@@ -23,7 +25,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route
-          path="/download/id=:id&hash=:hash"
+          path="/download/id=:id"
           element={<DownloadFileRoute />}
         />
         <Route element={<ProtectedRoutes />}>
@@ -40,6 +42,10 @@ function App() {
                 path=":idEmpreendimento"
                 element={<EmpreendimentosSingle />}
               />
+            </Route>
+            <Route path="qrcode">
+              <Route index element={<ViewQrCode />} />
+              <Route path=":id" element={<CreateQrCode />} />
             </Route>
             <Route path="arquivos" element={<Arquivos />} />
           </Route>

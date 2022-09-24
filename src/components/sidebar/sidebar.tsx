@@ -6,6 +6,7 @@ import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import AddBusinessRoundedIcon from "@mui/icons-material/AddBusinessRounded";
 import FilePresentRoundedIcon from "@mui/icons-material/FilePresentRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
+import { QrCode2Rounded } from "@mui/icons-material";
 
 const Sidebar = () => {
   return (
@@ -26,7 +27,7 @@ const Sidebar = () => {
             </Link>
           </li>
           <p className="subtitle">Cadastros</p>
-          <li>
+          <li className="menu_links">
             <Link to="./construtoras" style={{ textDecoration: "none" }}>
               <AddBusinessRoundedIcon className="icon" />
               <span>Construtoras</span>
@@ -36,6 +37,12 @@ const Sidebar = () => {
             <Link to="./empreendimentos" style={{ textDecoration: "none" }}>
               <ApartmentRoundedIcon className="icon" />
               <span>Empreendimentos</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="./qrcode" style={{ textDecoration: "none" }}>
+              <QrCode2Rounded className="icon" />
+              <span>QR Codes</span>
             </Link>
           </li>
           <li>

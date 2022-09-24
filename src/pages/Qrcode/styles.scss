@@ -1,0 +1,93 @@
+.filterWrapper {}
+
+
+.formWrapper {
+
+  .fileHiddenWrapper {
+    margin-top: 15px;
+
+    .fileWrapper {}
+  }
+}
+
+.qrCodeListWrapper {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+
+  .qrCodeWrapper {
+    display: flex;
+    margin: 10px 0;
+
+    .qrCode {
+      margin: 0 10px;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+
+      canvas {
+        border: 1px solid rgba(0, 0, 0, 0.250);
+        max-height: 85px;
+      }
+    }
+
+    .qrCode_descr {
+      margin: 0 15px;
+      border-left: 0.5px solid #002cdb;
+      flex: 2;
+      padding-left: 15px;
+
+      p {
+        font-weight: 300;
+      }
+
+      .description {
+      color: #000b36;
+        font-weight: 900;
+      }
+    }
+
+    .qrCode_counter {
+      display: flex;
+      width: 55px;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+
+      svg {
+        margin-bottom: 25px;
+        color: #000b36;
+      }
+    }
+
+    .qrCode_actions {
+      justify-content: space-between;
+      align-items: center;
+      display: flex;
+
+      svg {
+        color: #fff;
+        background-color: #001f9c;
+        width: auto;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 100px;
+        vertical-align: middle;
+        padding: 3px;
+        cursor: pointer;
+        margin-bottom: 5px;
+
+        &:hover {
+          color: #fff;
+          background-color: #000b36;
+        }
+      }
+
+
+
+    }
+  }
+}

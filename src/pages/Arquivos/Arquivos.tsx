@@ -31,7 +31,9 @@ const Arquivos = () => {
   return (
     <div className='contentContainer'>
       <h2>Arquivos</h2>
-      <div className="filterArea"></div>
+      <div className="filterArea">
+        
+      </div>
       <div className="filesWrapper">
         {
           fileList.map((file: any) => (
@@ -62,7 +64,6 @@ const Arquivos = () => {
             p: 4,
           }}
         >
-          <QrCodeGenerator data={selectedQrCode} />
         </Box>
       </Modal>
     </div>

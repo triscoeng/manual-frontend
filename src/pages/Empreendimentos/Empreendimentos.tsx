@@ -84,7 +84,7 @@ const Empreendimentos = () => {
   useEffect(() => {
     layoutContext.setNavbar_title("Lista de Empreendimentos");
     getEmpreendimentosData();
-    return () => {};
+    return () => { };
   }, [trigger]);
 
   const handleSingUp = () => {
@@ -130,9 +130,9 @@ const Empreendimentos = () => {
             <TableBody>
               {(rowsPerPage > 0
                 ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
                 : rows
               ).map((row: any) => (
                 <TableRow key={row.id}>
@@ -143,9 +143,6 @@ const Empreendimentos = () => {
                   <TableCell align="center">{row.Arquivos.length}</TableCell>
                   <TableCell align="center">
                     <>
-                      {/* <Link to={`./${row.id}`} style={{ textDecoration: "none" }}>
-                      <VisibilityIcon className="actionIcons green" />
-                    </Link> */}
                       <Link to={`./${row.id}`}>
                         <VisibilityIcon className="actionIcons green" />
                       </Link>

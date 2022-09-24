@@ -10,7 +10,7 @@ const DownloadFileRoute = () => {
     axios
       .get(
         process.env.REACT_APP_APIURL +
-          `/download?id=${params.id}&hash=${params.hash}`
+        `/download?id=${params.id}`
       )
       .then(({ data }) => {
         setLinkUrl(data);
@@ -25,17 +25,7 @@ const DownloadFileRoute = () => {
   }, []);
 
   return (
-    <object
-      data="http://africau.edu/images/default/sample.pdf"
-      type="application/pdf"
-      width="100%"
-      height="100%"
-    >
-      <p>
-        Alternative text - include a link{" "}
-        <a href="http://africau.edu/images/default/sample.pdf">to the PDF!</a>
-      </p>
-    </object>
+    <p>seu arquivo está sendo baixado</p>
   );
 };
 

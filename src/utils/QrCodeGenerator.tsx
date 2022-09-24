@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import QRCodeStyling from "qr-code-styling";
+import { EditRounded, SaveRounded } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const QrCodeGenerator = ({ data }: any) => {
-  console.log(
-    process.env.PUBLIC_URL + `/download/id=${data.id}&hash=${data.hash}`
-  );
+
+  const navigate = useNavigate()
+
   const qrCode = new QRCodeStyling({
-    width: 450,
-    height: 450,
-    data:
-      process.env.PUBLIC_URL +
-      `/download/id=${data.id}&hash=${data.hash}`,
+    width: 1024,
+    height: 1024,
+    data: process.env.REACT_APP_PUBLIC_URL + '/download/id=' + data.id,
     margin: 0,
     qrOptions: {
       typeNumber: 0,
@@ -39,23 +39,37 @@ const QrCodeGenerator = ({ data }: any) => {
   });
 
   useEffect(() => {
-    qrCode.append(document.getElementById("qrCode") as any);
+    console.log(qrCode)
+    qrCode.append(document.getElementById(data.id) as any);
   }, []);
 
   return (
     <>
-      <div id="qrCode"></div>
-
-      <button
+      <div id={data.id} className="qrCode">
+        <div className="qrCode_actions">
+          <span className="edit" onClick={() => navigate(`./${data.id}`, { state: data })}>
+            <EditRounded />
+          </span>
+          <span className="download" onClick={() => {
+            qrCode.download({
+              name: "QRCODE_" + data.url,
+              extension: "jpeg"
+            })
+          }}>
+            <SaveRounded />
+          </span>
+        </div>
+      </div>
+      {/* <button
         onClick={() => {
           qrCode.download({
-            name: "QRCODE_" + data.nomeArquivo,
+            name: "QRCODE_" + data.url,
             extension: "png",
           });
         }}
       >
         Download do QRCode
-      </button>
+      </button> */}
     </>
   );
 };

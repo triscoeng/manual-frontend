@@ -61,7 +61,7 @@ const ViewQrCode = () => {
               <span className="description">Endereço da URL:</span>
               <p className="">{qrcode.url}</p>
               <span className="description">Endereço da URL Fixa:</span>
-              <p className="">{process.env.REACT_APP_PUBLIC_URL}/download/id={qrcode.id}</p>
+              <p className="">{process.env.REACT_APP_PUBLIC_URL}/manual/download/id={qrcode.id}</p>
             </div>
             <div className="qrCode_counter">
               <RemoveRedEyeRounded />

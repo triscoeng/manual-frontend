@@ -30,7 +30,7 @@ function App() {
           element={<DownloadFileRoute />}
         />
         <Route element={<ProtectedRoutes />}>
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/manual" element={<AdminLayout />}>
             <Route index element={<Home />} />
             <Route path="construtoras">
               <Route index element={<Construtoras />} />

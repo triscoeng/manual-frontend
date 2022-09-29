@@ -21,7 +21,7 @@ const Sidebar = () => {
         <ul>
           <p className="subtitle">Página Principal</p>
           <li>
-            <Link to="/admin" style={{ textDecoration: "none" }}>
+            <Link to="/manual" style={{ textDecoration: "none" }}>
               <DashboardIcon className="icon" />
               <span>Dashboard</span>
             </Link>

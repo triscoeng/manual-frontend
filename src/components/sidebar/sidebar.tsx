@@ -40,15 +40,15 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link to="./qrcode" style={{ textDecoration: "none" }}>
-              <QrCode2Rounded className="icon" />
-              <span>QR Codes</span>
-            </Link>
-          </li>
-          <li>
             <Link to="./arquivos" style={{ textDecoration: "none" }}>
               <FilePresentRoundedIcon className="icon" />
               <span>Arquivos</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="./qrcode" style={{ textDecoration: "none" }}>
+              <QrCode2Rounded className="icon" />
+              <span>QR Codes</span>
             </Link>
           </li>
           <p className="subtitle">Admin</p>

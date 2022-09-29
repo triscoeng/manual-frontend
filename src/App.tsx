@@ -15,8 +15,9 @@ import EmpreendimentosSingle from "./pages/EmpreendimentosSingle/Empreendimentos
 import EmpreendimentosCadastro from "./pages/EmpreendimentosCadastro/EmpreendimentosCadastro";
 import DownloadFileRoute from "./utils/DownloadFileRoute";
 import Arquivos from "./pages/Arquivos/Arquivos";
-import ViewQrCode from "./pages/Qrcode/view/ViewQrCode";
-import CreateQrCode from "./pages/Qrcode/create/CreateQrCode";
+import CreateQrCode from "./pages/Qrcode/CreateQrCode";
+import ViewQrCode from "./pages/Qrcode/ViewQrCode";
+import EditQrCode from "./pages/Qrcode/EditQrCode";
 
 function App() {
   return (
@@ -43,11 +44,12 @@ function App() {
                 element={<EmpreendimentosSingle />}
               />
             </Route>
+            <Route path="arquivos" element={<Arquivos />} />
             <Route path="qrcode">
               <Route index element={<ViewQrCode />} />
-              <Route path=":id" element={<CreateQrCode />} />
+              <Route path="novo" element={<CreateQrCode />} />
+              <Route path=":id" element={<EditQrCode />} />
             </Route>
-            <Route path="arquivos" element={<Arquivos />} />
           </Route>
         </Route>
       </Routes>

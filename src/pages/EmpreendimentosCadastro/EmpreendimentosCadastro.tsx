@@ -5,7 +5,6 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import Select from "react-select";
 import AsyncSelect from "react-select/async"
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -39,6 +38,7 @@ const EmpreendimentosCadastro = () => {
       .then((r) => {
         console.log(r);
         toast.success("Empreendimento cadastrado com sucesso");
+        window.history.back()
       })
       .catch((err) => {
         toast.error(err.message);
@@ -167,11 +167,12 @@ const EmpreendimentosCadastro = () => {
               placeholder="Escolha a Construtora"
               styles={{
                 valueContainer: () => (
-                  { height: '55px', 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  paddingLeft: '5px'
-                }),
+                  {
+                    height: '55px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingLeft: '5px'
+                  }),
                 control: (provided: any, state: any) => {
                   return {
                     ...provided,

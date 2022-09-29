@@ -3,11 +3,11 @@ import { Button } from "@mui/material";
 import { fontWeight } from "@mui/system";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import QrCodeGenerator from "../../../utils/QrCodeGenerator";
+import QrCodeGenerator from "../../utils/QrCodeGenerator";
 
-import "../styles.scss"
+import "./styles.scss"
 
 const ViewQrCode = () => {
 
@@ -37,11 +37,13 @@ const ViewQrCode = () => {
     }
   }, [])
 
+  const navigate = useNavigate()
+
   return (
     <div className="contentContainer">
       <h2>QrCodes Cadastrados <span style={{ fontWeight: '300', fontSize: '12px' }}>últimos 10 cadastros</span></h2>
       <div className="cadastro">
-        <Button variant="contained" fullWidth startIcon={<AddCircleRounded />}>
+        <Button variant="contained" fullWidth startIcon={<AddCircleRounded />} onClick={() => navigate('./novo')}>
           Cadastrar
         </Button>
       </div>
@@ -52,14 +54,14 @@ const ViewQrCode = () => {
           <div className="qrCodeWrapper" key={index}>
             <QrCodeGenerator data={qrcode} />
             <div className="qrCode_descr">
-              <span className="description">Endereço da URL Fixa:</span>
-              <p className="">{process.env.REACT_APP_PUBLIC_URL}/download/id={qrcode.id}</p>
-              <span className="description">Endereço da URL:</span>
-              <p className="">{qrcode.url}</p>
-              <span className="description">Empreendimento:</span>
-              <p className="">{qrcode.empreendimento.nomeEmpreendimento}</p>
               <span className="description">Construtora:</span>
               <p className="">{qrcode.empreendimento.construtora.nome}</p>
+              <span className="description">Empreendimento:</span>
+              <p className="">{qrcode.empreendimento.nomeEmpreendimento}</p>
+              <span className="description">Endereço da URL:</span>
+              <p className="">{qrcode.url}</p>
+              <span className="description">Endereço da URL Fixa:</span>
+              <p className="">{process.env.REACT_APP_PUBLIC_URL}/download/id={qrcode.id}</p>
             </div>
             <div className="qrCode_counter">
               <RemoveRedEyeRounded />

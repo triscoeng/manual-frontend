@@ -5,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 
 const QrCodeGenerator = ({ data }: any) => {
 
+
   const navigate = useNavigate()
 
   const qrCode = new QRCodeStyling({
     width: 1024,
     height: 1024,
-    data: process.env.REACT_APP_PUBLIC_URL + '/download/id=' + data.id,
+    data: process.env.REACT_APP_PUBLIC_URL + '/manual/download/' + data.id,
     margin: 0,
     qrOptions: {
       typeNumber: 0,

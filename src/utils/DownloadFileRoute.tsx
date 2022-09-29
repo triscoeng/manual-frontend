@@ -8,7 +8,6 @@ const DownloadFileRoute = () => {
   const navigate = useNavigate()
 
   const getUrlLink = async () => {
-    console.log('entr')
     const url = await axios
       .get(
         process.env.REACT_APP_APIURL +

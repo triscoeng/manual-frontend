@@ -23,11 +23,11 @@ const ViewQrCode = () => {
     });
     const { data } = await query
     setQrCodeList(data)
-    console.log(data)
   };
 
 
   useEffect(() => {
+    console.log(process.env)
     try {
       setIsLoading(true)
       getStartList().finally(() => setIsLoading(false))

@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="top">
-        <Link to="/admin" style={{ textDecoration: "none" }}>
+        <Link to="/manual" style={{ textDecoration: "none" }}>
           <span className="logo">triscoadmin</span>
         </Link>
       </div>

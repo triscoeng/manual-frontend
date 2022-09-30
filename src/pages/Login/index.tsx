@@ -31,7 +31,7 @@ const Login = () => {
         localStorage.setItem("token", r.data.token);
         localStorage.setItem("usuario", JSON.stringify(r.data.data.data));
         localStorage.setItem("exp", r.data.data.exp);
-        navigate("/manual");
+        navigate("/admin");
       })
       .catch((err) => {
         toast.error(err.message);

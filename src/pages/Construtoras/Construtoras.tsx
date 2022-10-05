@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 
 import "./construtoras.scss";
 import { Link } from "react-router-dom";
+import { FilterArea } from "../../components/FilterArea";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -75,6 +76,8 @@ const Construtoras = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -102,7 +105,6 @@ const Construtoras = () => {
         },
       })
       .then(({ data }) => {
-        console.log(data);
         setRows(data);
         setLoading(false)
       })
@@ -210,6 +212,10 @@ const Construtoras = () => {
     getConstrutoraList();
   }, [updateTrigger]);
 
+
+
+
+
   return (
     <div className="contentContainer">
       <h2>Construtoras Cadastradas</h2>
@@ -223,6 +229,9 @@ const Construtoras = () => {
         >
           Cadastrar
         </Button>
+        <div className="filterWrapper">
+          {rows.length > 0 ? <FilterArea setState={setRows} state={rows} /> : ''}
+        </div>
         <Table
           sx={{
             border: "1px solid rgba(224, 224, 224, 1)",

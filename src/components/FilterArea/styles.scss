@@ -1,0 +1,16 @@
+.filter_group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+  gap: 25px;
+
+  .filter_cell {
+    width: 100%;
+  }
+
+  .actionbutton {
+    align-self: flex-end;
+  }
+
+}

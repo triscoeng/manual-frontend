@@ -1,10 +1,11 @@
 import { AddCircleRounded, AddRounded, AutoGraph, RemoveRedEyeRounded } from "@mui/icons-material";
-import { Button } from "@mui/material";
-import { fontWeight } from "@mui/system";
+import { Button, CircularProgress } from "@mui/material";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FilterArea } from "../../components/FilterArea";
+import { LayoutContext } from "../../context/LayoutContext";
 import QrCodeGenerator from "../../utils/QrCodeGenerator";
 
 import "./styles.scss"
@@ -13,9 +14,26 @@ const ViewQrCode = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [qrCodeList, setQrCodeList] = useState([]);
+  const navigate = useNavigate()
+  const layoutContext: any = useContext(LayoutContext);
 
+  const [searchState, setSearchState]: any = useState({});
+
+  const handleFilterButton = async () => {
+    setIsLoading(true);
+    let query = new URLSearchParams(searchState)
+    const dataFetch = await axios.get(process.env.REACT_APP_APIURL + '/qrcode?' + query, {
+      headers: {
+        'authorization': localStorage.getItem('token') as any
+      }
+    })
+    const data = await dataFetch.data
+    setQrCodeList(data);
+    setIsLoading(false);
+  }
 
   const getStartList = async () => {
+    setIsLoading(true)
     const query = axios.get(process.env.REACT_APP_APIURL + "/qrcode", {
       headers: {
         authorization: localStorage.getItem("token") as any,
@@ -23,11 +41,12 @@ const ViewQrCode = () => {
     });
     const { data } = await query
     setQrCodeList(data)
+    setIsLoading(false)
   };
 
 
   useEffect(() => {
-    console.log(process.env)
+    layoutContext.setNavbar_title("Lista de QRCodes cadastrados.");
     try {
       setIsLoading(true)
       getStartList().finally(() => setIsLoading(false))
@@ -37,7 +56,6 @@ const ViewQrCode = () => {
     }
   }, [])
 
-  const navigate = useNavigate()
 
   return (
     <div className="contentContainer">
@@ -47,8 +65,11 @@ const ViewQrCode = () => {
           Cadastrar
         </Button>
       </div>
-      <div className="filterWrapper"></div>
+      <div className="filterWrapper">
+        <FilterArea setState={setQrCodeList} state={qrCodeList} />
+      </div>
       <div className="qrCodeListWrapper">
+        {isLoading ? <CircularProgress /> : ""}
         {qrCodeList.map((qrcode: any, index) =>
         (
           <div className="qrCodeWrapper" key={index}>
@@ -61,7 +82,7 @@ const ViewQrCode = () => {
               <span className="description">Endereço da URL:</span>
               <p className="">{qrcode.url}</p>
               <span className="description">Endereço da URL Fixa:</span>
-              <p className="">{process.env.REACT_APP_PUBLIC_URL}/download/id={qrcode.id}</p>
+              <p className="">{process.env.REACT_APP_PUBLIC_URL}/qrcode/{qrcode.id}</p>
             </div>
             <div className="qrCode_counter">
               <RemoveRedEyeRounded />

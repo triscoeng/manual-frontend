@@ -10,10 +10,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/manual">
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -22,9 +22,7 @@ root.render(
         draggable
         pauseOnHover
       />
-      <div className="app">
-        <App />
-      </div>
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 );

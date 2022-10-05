@@ -22,6 +22,7 @@ import { Button, CircularProgress } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import { FilterArea } from "../../components/FilterArea";
 
 const Empreendimentos = () => {
   const layoutContext: any = useContext(LayoutContext);
@@ -103,6 +104,9 @@ const Empreendimentos = () => {
         >
           Cadastrar
         </Button>
+        <div className="filterArea">
+          <FilterArea state={rows} setState={setRows} />
+        </div>
         <Table
           sx={{
             border: "1px solid rgba(224, 224, 224, 1)",

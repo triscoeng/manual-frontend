@@ -1,15 +1,11 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { LayoutContextProvider } from "./context/LayoutContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Construtoras from "./pages/Construtoras/Construtoras";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
-
-import "./app.scss";
 import AdminLayout from "./components/AdminLayout/AdminLayout";
-import Single from "./pages/Single";
 import ConstrutorasSingle from "./pages/ConstrutorasSingle/ConstrutorasSingle";
-import List from "./pages/List";
 import Empreendimentos from "./pages/Empreendimentos/Empreendimentos";
 import EmpreendimentosSingle from "./pages/EmpreendimentosSingle/EmpreendimentosSingle";
 import EmpreendimentosCadastro from "./pages/EmpreendimentosCadastro/EmpreendimentosCadastro";
@@ -18,6 +14,8 @@ import Arquivos from "./pages/Arquivos/Arquivos";
 import CreateQrCode from "./pages/Qrcode/CreateQrCode";
 import ViewQrCode from "./pages/Qrcode/ViewQrCode";
 import EditQrCode from "./pages/Qrcode/EditQrCode";
+import "./app.scss";
+import New from "./pages/New";
 
 function App() {
   return (
@@ -25,10 +23,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/download/id=:id"
-          element={<DownloadFileRoute />}
-        />
+        <Route path="/qrcode">
+          <Route path=":id" element={<DownloadFileRoute />} />
+        </Route>
         <Route element={<ProtectedRoutes />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Home />} />

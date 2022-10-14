@@ -11,7 +11,7 @@ const QrCodeGenerator = ({ data }: any) => {
   const qrCode = new QRCodeStyling({
     width: 1024,
     height: 1024,
-    data: process.env.REACT_APP_PUBLIC_URL + '/manual/download/' + data.id,
+    data: process.env.REACT_APP_PUBLIC_URL + '/qrcode/' + data.id,
     margin: 0,
     qrOptions: {
       typeNumber: 0,

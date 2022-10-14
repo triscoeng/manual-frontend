@@ -7,53 +7,24 @@ import { toast } from "react-toastify";
 import { FilterArea } from "../../components/FilterArea";
 import { LayoutContext } from "../../context/LayoutContext";
 import QrCodeGenerator from "../../utils/QrCodeGenerator";
+import useFetchData from "../../utils/useFetchData";
 
 import "./styles.scss"
 
 const ViewQrCode = () => {
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [qrCodeList, setQrCodeList] = useState([]);
   const navigate = useNavigate()
   const layoutContext: any = useContext(LayoutContext);
-
   const [searchState, setSearchState]: any = useState({});
+  const qrCodeApiData: any = useFetchData(process.env.REACT_APP_APIURL + "/qrcode", "get")
 
-  const handleFilterButton = async () => {
-    setIsLoading(true);
-    let query = new URLSearchParams(searchState)
-    const dataFetch = await axios.get(process.env.REACT_APP_APIURL + '/qrcode?' + query, {
-      headers: {
-        'authorization': localStorage.getItem('token') as any
-      }
-    })
-    const data = await dataFetch.data
-    setQrCodeList(data);
-    setIsLoading(false);
-  }
-
-  const getStartList = async () => {
-    setIsLoading(true)
-    const query = axios.get(process.env.REACT_APP_APIURL + "/qrcode", {
-      headers: {
-        authorization: localStorage.getItem("token") as any,
-      },
-    });
-    const { data } = await query
-    setQrCodeList(data)
-    setIsLoading(false)
-  };
+  useEffect(() => {
+    console.log(qrCodeApiData)
+  }, [qrCodeApiData])
 
 
   useEffect(() => {
     layoutContext.setNavbar_title("Lista de QRCodes cadastrados.");
-    try {
-      setIsLoading(true)
-      getStartList().finally(() => setIsLoading(false))
-    } catch (err: any) {
-      setIsLoading(false)
-      toast.error(err.message)
-    }
   }, [])
 
 
@@ -66,23 +37,23 @@ const ViewQrCode = () => {
         </Button>
       </div>
       <div className="filterWrapper">
-        <FilterArea setState={setQrCodeList} state={qrCodeList} />
+        <FilterArea setState={setSearchState} state={searchState} onPressFilter={() => { console.log(searchState) }} />
       </div>
+      {qrCodeApiData.isLoading ? <CircularProgress color="success" sx={{ alignSelf: 'center' }} /> : ""}
       <div className="qrCodeListWrapper">
-        {isLoading ? <CircularProgress /> : ""}
-        {qrCodeList.map((qrcode: any, index) =>
+        {qrCodeApiData.apiData?.map((qrcode: any, index: any) =>
         (
           <div className="qrCodeWrapper" key={index}>
             <QrCodeGenerator data={qrcode} />
             <div className="qrCode_descr">
               <span className="description">Construtora:</span>
-              <p className="">{qrcode.empreendimento.construtora.nome}</p>
+              <p className="">{qrcode.construtora.label}</p>
               <span className="description">Empreendimento:</span>
-              <p className="">{qrcode.empreendimento.nomeEmpreendimento}</p>
-              <span className="description">Endereço da URL:</span>
-              <p className="">{qrcode.url}</p>
-              <span className="description">Endereço da URL Fixa:</span>
+              <p className="">{qrcode.empreendimento.label}</p>
+              <span className="description">Endereço da URL Fixa (origem):</span>
               <p className="">{process.env.REACT_APP_PUBLIC_URL}/qrcode/{qrcode.id}</p>
+              <span className="description">Endereço da URL (destino):</span>
+              <p className="">{qrcode.url}</p>
             </div>
             <div className="qrCode_counter">
               <RemoveRedEyeRounded />

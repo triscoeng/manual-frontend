@@ -3,16 +3,26 @@ import { Button, Checkbox, FilledInput, FormControl, FormControlLabel, FormGroup
   from "@mui/material";
 import { red } from "@mui/material/colors";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { LayoutContext } from "../../context/LayoutContext";
 import './styles.scss'
 
 const EditQrCode = () => {
-  const { state, state: { empreendimento: { Arquivos: files } } }: any = useLocation()
+
+
+  const layoutContext: any = useContext(LayoutContext);
+  const { state, state: { empreendimento: { arquivos: files } } }: any = useLocation()
   const [data, setData]: any = useState(state);
-  const [editState, setEditState]: any = useState({ idEmpreendimento: data.empreendimento.id, url: data.url });
+  const [editState, setEditState]: any = useState({ idEmpreendimento: data.empreendimento.value, url: data.url });
+
+  console.log(data)
+
+  useEffect(() => {
+    layoutContext.setNavbar_title("Edição QRCode do Empreendimento: " + state.empreendimento.label);
+  }, [])
 
   const handleClearInput = () => {
     setEditState((prev: any) => ({
@@ -74,7 +84,7 @@ const EditQrCode = () => {
             <FilledInput
               id="construtora"
               disabled={true}
-              value={data.empreendimento.construtora.nome || null}
+              value={data.construtora.label || null}
               onChange={(e: any) => console.log(e.target.value)}
             />
           </FormControl>
@@ -85,7 +95,7 @@ const EditQrCode = () => {
             <FilledInput
               id="empreendimento"
               disabled={true}
-              value={data.empreendimento.nomeEmpreendimento || null}
+              value={data.empreendimento.label || null}
               onChange={(e: any) => console.log(e.target.value)}
             />
           </FormControl>

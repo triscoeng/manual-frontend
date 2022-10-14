@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import AddBusinessRoundedIcon from "@mui/icons-material/AddBusinessRounded";
 import FilePresentRoundedIcon from "@mui/icons-material/FilePresentRounded";
+import { QrCodeRounded } from "@mui/icons-material";
 
 const Card = ({ title, dados }: any) => {
   let data: any = {};
@@ -21,7 +22,7 @@ const Card = ({ title, dados }: any) => {
         ),
         title: "Construtoras",
         span: "Quantidade de construtoras cadastradas",
-        link: "Ver todas Construtoras",
+        link: "Ver Construtoras",
       };
       break;
     case "empreendimentos":
@@ -37,7 +38,7 @@ const Card = ({ title, dados }: any) => {
         ),
         title: "Empreendimentos",
         span: "Quantidade de empreendimentos cadastrados",
-        link: "Ver todos Empreendimentos",
+        link: "Ver Empreendimentos",
       };
       break;
     case "arquivos":
@@ -52,8 +53,25 @@ const Card = ({ title, dados }: any) => {
           />
         ),
         title: "Arquivos",
-        span: "Quantidade de donwloads",
-        link: "Ver todos Arquivos",
+        span: "Quantidade de arquivos hospedados",
+        link: "Ver Arquivos",
+      };
+      break;
+
+    case "qrcode":
+      data = {
+        icon: (
+          <QrCodeRounded
+            className="icon"
+            style={{
+              color: "#2C3E50",
+              backgroundColor: "#ECF0F1",
+            }}
+          />
+        ),
+        title: "QRCodes",
+        span: "Quantidade de QRCodes cadastrados",
+        link: "Ver os links",
       };
       break;
 

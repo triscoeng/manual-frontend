@@ -1,102 +1,67 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import AsyncSelect, { useAsync } from 'react-select/async';
 import { Button } from "@mui/material";
 import axios from 'axios';
-import './styles.scss';
 import Select from 'react-select';
 import { DeleteRounded } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom'
+import useFetchData from '../../utils/useFetchData';
 
-interface FilterAreaProps {
-  state: any;
-  setState: any;
-}
+import './styles.scss';
+export function FilterArea({ setState, state, onPressFilter }: any) {
 
-export function FilterArea({ setState, state }: FilterAreaProps) {
-
-  const [initState, setInitState] = useState(state);
-
-  const [construtoraList, ConstrutoraList]: any = useState({});
-  const [empreendimentoList, setEmpreendimentoList]: any = useState({});
-  const [construtoraSelected, setConstrutoraSelected]: any = useState();
-  const [empSelected, setEmpSelected]: any = useState();
+  const [empreendimentoList, setEmpreendimentoList]: any = useState();
+  const companies: any = useFetchData(process.env.REACT_APP_APIURL + '/construtoras/list', 'get', {})
 
   const location = useLocation().pathname
+  // const { state: tempFilesArray } = { state }
 
   const handleReset = () => {
-    setState(initState)
-    setConstrutoraSelected('')
-    setEmpSelected('')
+    console.log(companies)
   }
 
-
-  const handleLoadOptions = async (input: string, cb: any) => {
-    const { data } = await axios.get(process.env.REACT_APP_APIURL + '/construtoras?', {
-      headers: {
-        'authorization': localStorage.getItem('token') as any
-      }
-    })
-    const afterFilter = data.filter((i: any) => i.nome.toLowerCase().includes(input.toLowerCase()))
-    cb(afterFilter)
-    return data
+  const handleConstrutoraChange = async (e: any, action: any) => {
+    setEmpreendimentoList(e.empreendimentos.map((s: any) => ({ label: s.label, value: s.value })))
+    setState((prev: any) => ({ ...prev, construtora: e.value }))
   }
 
-  const handleFilter = () => {
-    console.log({ const: construtoraSelected, emp: empSelected })
-    const tempo = state.filter((single: any) => {
-      console.log(single)
-      return single.construtora.label === construtoraSelected.label
-    })
-    console.log(tempo)
-  }
-
-  const handleConstrutoraChange = async (e: any) => {
-    setConstrutoraSelected({
-      label: e.nome,
-      value: e.id
-    })
-    setEmpreendimentoList(e.Empreendimentos)
-  }
-
-  const handleEmpreendimentoChange = (value: any) => {
-    setEmpSelected({
-      label: value.nomeEmpreendimento,
-      value: value.id
-    })
+  const handleEmpreendimentoChange = (value: any, action: any) => {
+    setState((prev: any) => ({ ...prev, empreendimento: value.value }))
   }
 
   return (
-    <div className="filter_group">
-      <div className="filter_cell">
-        <AsyncSelect defaultOptions
-          styles={{ menu: base => ({ ...base, zIndex: 9999 }) }}
-          placeholder="Escolha a Construtora"
-          loadOptions={handleLoadOptions}
-          getOptionLabel={(i: any) => i.nome}
-          getOptionValue={(v: any) => v.id}
-          defaultValue
-          onChange={handleConstrutoraChange}
-        />
-      </div>
-      {!location.includes('construtoras') &&
-        <div className="filter_cell">
-          <Select
-            styles={{ menu: base => ({ ...base, zIndex: 9999 }) }}
-            placeholder={"Escolha o Empreendimento"}
-            options={empreendimentoList}
-            getOptionLabel={(l: any) => l.nomeEmpreendimento}
-            getOptionValue={(v: any) => v.id}
-            onChange={handleEmpreendimentoChange} />
+    <Suspense fallback={<p>Loading</p>}>
+      {companies.apiData &&
+        <div className="filter_group">
+          <div className="filter_cell">
+            <Select
+              placeholder={"Escolha a Construtora"}
+              isClearable={true}
+              styles={{ menu: base => ({ ...base, zIndex: 9999 }) }}
+              options={companies.apiData}
+              onMenuClose={() => console.log(state)}
+              onChange={handleConstrutoraChange} />
+          </div>
+          {!location.includes('construtoras') &&
+            <div className="filter_cell">
+              <Select
+                placeholder={"Escolha o Empreendimento"}
+                isClearable={true}
+                styles={{ menu: base => ({ ...base, zIndex: 9999 }) }}
+                options={empreendimentoList}
+                onChange={handleEmpreendimentoChange} />
+            </div>
+          }
+          <div className="filter_cell actionbutton">
+            <Button variant="contained" onClick={onPressFilter}>
+              Filtrar
+            </Button>
+            <Button variant="contained" sx={{ marginLeft: 2 }} color={"error"} onClick={handleReset}>
+              <DeleteRounded color={"action"} />
+            </Button>
+          </div>
         </div>
       }
-      <div className="filter_cell actionbutton">
-        <Button variant="contained" onClick={handleFilter}>
-          Filtrar
-        </Button>
-        <Button variant="contained" sx={{ marginLeft: 2 }} color={"error"} onClick={handleReset}>
-          <DeleteRounded color={"action"} />
-        </Button>
-      </div>
-    </div>
+    </Suspense>
   );
 }

@@ -6,6 +6,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import AsyncSelect from "react-select/async"
+import Select from "react-select"
+import useFetchData from "../../utils/useFetchData";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -14,7 +16,6 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 import "./styles.scss";
-import { borderBottom } from "@mui/system";
 
 const EmpreendimentosCadastro = () => {
   const [uploadedFiles, setUploadedFiles]: any = useState([]);
@@ -26,6 +27,7 @@ const EmpreendimentosCadastro = () => {
 
   const [construtorasData, setConstrutorasData] = useState([]);
 
+  const companies: any = useFetchData(process.env.REACT_APP_APIURL + "/construtoras/list", 'GET')
 
   const handleSubmitRequest = async (data: any) => {
     setIsLoading(true);
@@ -96,7 +98,7 @@ const EmpreendimentosCadastro = () => {
 
   const getConstrutorasData = async () => {
     await axios
-      .get(process.env.REACT_APP_APIURL + "/construtoras/names", {
+      .get(process.env.REACT_APP_APIURL + "/construtoras/list", {
         headers: {
           authorization: localStorage.getItem("token") as any,
         },
@@ -160,11 +162,8 @@ const EmpreendimentosCadastro = () => {
       <div className="tableContainer">
         <form action="#" encType="multipart/form-data">
           <FormControl fullWidth sx={{ m: 1 }}>
-            <AsyncSelect
-              onChange={(opt: any) => setConstrutoraSelected(opt.value)}
-              loadOptions={getConstrutoraDataAsync}
-              defaultOptions={true}
-              placeholder="Escolha a Construtora"
+            <Select
+              options={companies.apiData}
               styles={{
                 valueContainer: () => (
                   {
@@ -187,6 +186,10 @@ const EmpreendimentosCadastro = () => {
                   }
                 }
               }}
+              placeholder="Escolha a Construtora"
+              onChange={(opt: any) => setConstrutoraSelected(opt.value)}
+
+
             />
           </FormControl>
           <FormControl fullWidth sx={{ m: 1 }} variant="filled">

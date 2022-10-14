@@ -1,7 +1,7 @@
 import { AddCircleRounded, CancelRounded, CheckBox, DeleteRounded } from "@mui/icons-material";
 import { Button, Checkbox, CircularProgress, FilledInput, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, Radio, RadioGroup }
   from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AsyncSelect from "react-select/async"
 import Select from "react-select"
@@ -10,66 +10,46 @@ import axios from "axios";
 import './styles.scss'
 import { red } from "@mui/material/colors";
 import { toast } from "react-toastify";
+import useFetchData from "../../utils/useFetchData";
+import { LayoutContext } from "../../context/LayoutContext";
 
 
 const CreateQrCode = () => {
 
   // STATES
   const [construtoras, setConstrutoras]: any = useState();
-  const [empreendimento, setEmpreendimento]: any = useState();
-  const [isLoading, setIsLoading]: any = useState(false);
+  const [empreendimentos, setEmpreendimentos]: any = useState([]);
   const [arquivosEmp, setArquivosEmp]: any = useState([]);
+
+  const [isLoading, setIsLoading]: any = useState(false);
   const [arquivoSelected, setArquivoSelected]: any = useState();
   const [url, setUrl] = useState("");
 
   const [cadastroState, setCadastroState]: any = useState({ url: "" });
+  const companies: any = useFetchData(process.env.REACT_APP_APIURL + '/construtoras/list', 'GET')
+  const layoutContext: any = useContext(LayoutContext)
 
-
+  useEffect(() => {
+    layoutContext.setNavbar_title("Cadastro de novo QRCode para: " + empreendimentos?.label);
+  }, [])
 
   // Axios
-  const getConstrutoraDataAsync: any = async (searchData: any, callback: any) => {
-    const data = await axios.get(process.env.REACT_APP_APIURL + "/construtoras/names", {
-      headers: {
-        authorization: localStorage.getItem("token") as any,
-      }
-    })
-      .then((result: any) => result.data.map((data: any) => ({
-        value: data.id,
-        label: data.nome,
-      })))
-      .then((final: any) => final.filter((i: any) => i.label.toLowerCase().includes(searchData.toLowerCase())))
-    callback(data);
-    return data
+  const handleCompanyChange: any = (e: any) => {
+    setCadastroState((prev: any) =>
+      ({ ...prev, idConstrutora: e.value }))
+    setConstrutoras(e)
+    setEmpreendimentos(e.empreendimentos)
   }
 
-  const getEmpDataAsync: any = async (searchData: any, callback: any) => {
-    setIsLoading(true)
-    const data = await axios.get(process.env.REACT_APP_APIURL + "/construtora/" + cadastroState.idConstrutora, {
-      headers: {
-        authorization: localStorage.getItem("token") as any,
-      }
-    })
-      .then(({ data: { Empreendimentos } }) => Empreendimentos.map((emp: any) => ({
-        value: emp.id,
-        label: emp.nomeEmpreendimento
-      })))
-    // console.log(Empreendimentos)
-    setEmpreendimento(data)
-    setIsLoading(false)
-    return data;
+  const handleEmpChange: any = (e: any) => {
+    setCadastroState((prev: any) => ({ ...prev, idEmpreendimento: e.value }))
+    setArquivosEmp(e.arquivos)
   }
 
+  useEffect(() => {
+    console.log(empreendimentos)
+  }, [empreendimentos])
 
-  const getFilesFromEmp: any = async (id: any) => {
-    setIsLoading(true)
-    const { data: query }: any = await axios.get(process.env.REACT_APP_APIURL + "/empreendimento/" + id, {
-      headers: {
-        authorization: localStorage.getItem("token") as any,
-      }
-    }
-    ).then((r: any) => setArquivosEmp(r.data.Arquivos))
-      .finally(() => setIsLoading(false))
-  }
 
   const handleSubmit = async () => {
     await axios.post(process.env.REACT_APP_APIURL + "/qrcode/", cadastroState, {
@@ -80,13 +60,11 @@ const CreateQrCode = () => {
       console.log(r)
       if (r.data) {
         toast.success("QRCode cadastrado com sucesso.")
+        window.history.back()
       }
     }).catch((error: any) => toast.error(error.message))
   }
 
-  useEffect(() => {
-    getEmpDataAsync()
-  }, [cadastroState.idConstrutora])
 
   return (
     <div className="contentContainer">
@@ -94,7 +72,18 @@ const CreateQrCode = () => {
       <div className="formWrapper">
         <form action="">
           <FormControl fullWidth variant="filled">
-            <AsyncSelect
+            {
+              companies.isLoading ?
+                <CircularProgress />
+                :
+                <Select
+                  placeholder={"Escolha a construtora"}
+                  closeMenuOnSelect={true}
+                  options={companies?.apiData}
+                  onChange={handleCompanyChange}
+                />
+            }
+            {/* <AsyncSelect
               placeholder={"Escolha a construtora"}
               closeMenuOnSelect={true}
               loadOptions={getConstrutoraDataAsync}
@@ -104,19 +93,19 @@ const CreateQrCode = () => {
                   ({ ...prev, idConstrutora: e.value }))
               }
               }
-            />
+            /> */}
           </FormControl>
           <br />
           <br />
           <FormControl fullWidth variant="filled">
-            {cadastroState.idConstrutora && <Select
-              placeholder={"Escolha um Empreendimento"}
-              options={empreendimento}
-              onChange={async (e: any) => {
-                setCadastroState((prev: any) => ({ ...prev, idEmpreendimento: e.value }))
-                await getFilesFromEmp(e.value)
-              }}
-            />}
+            {cadastroState.idConstrutora
+              &&
+              <Select
+                isClearable={true}
+                placeholder={"Escolha um Empreendimento"}
+                options={empreendimentos}
+                onChange={handleEmpChange}
+              />}
           </FormControl>
           <br />
           <br />
@@ -136,6 +125,7 @@ const CreateQrCode = () => {
                     {
                       arquivosEmp && arquivosEmp.map((arquivo: any, index: any) => (
                         <FormControlLabel
+                          key={index}
                           label={arquivo.nomeArquivo}
                           checked={cadastroState.url.includes(arquivo.nomeArquivo)}
                           control={<Radio onClick={(e: any) => {

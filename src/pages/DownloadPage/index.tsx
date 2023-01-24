@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useFetchData from "../../utils/useFetchData";
 import PaginaDoUsuario from "../PaginaDoUsuario/PaginaDoUsuario";
-import SingleDownload from "../PaginaDoUsuario/SingleDownload";
 
 import "./styles.scss"
 

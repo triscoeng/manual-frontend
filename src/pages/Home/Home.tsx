@@ -12,7 +12,7 @@ const Home = () => {
     layoutContext.setNavbar_title("Trisco Engenharia - Administração de QR Codes ");
     return () => { };
   }, []);
-  const { apiData, isLoading }: any = useFetchData(process.env.REACT_APP_APIURL + '/home', 'GET')
+  const { apiData, isLoading }: any = useFetchData(import.meta.env.VITE_APIURL + '/home', 'GET')
 
   return (
     <div className="cardContainer">

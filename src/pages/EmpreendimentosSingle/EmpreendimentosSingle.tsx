@@ -28,7 +28,7 @@ const EmpreendimentosSingle = () => {
   const [newFiles, setNewFiles] = useState([]);
 
   const apiDataContext: any = useContext(ApiContext)
-  const empData: any = useFetchData(process.env.REACT_APP_APIURL + '/empreendimento/' + idEmpreendimento)
+  const empData: any = useFetchData(import.meta.env.VITE_APIURL + '/empreendimento/' + idEmpreendimento)
 
   useEffect(() => {
     console.log("🚀 ~ file: EmpreendimentosSingle.tsx ~ line 22 ~ EmpreendimentosSingle ~ loading", loading)
@@ -95,7 +95,7 @@ const EmpreendimentosSingle = () => {
     try {
       setLoading(true);
       await axios
-        .post(process.env.REACT_APP_APIURL + "/empreendimento/edit", form, {
+        .post(import.meta.env.VITE_APIURL + "/empreendimento/edit", form, {
           headers: {
             authorization: localStorage.getItem("token") as any,
           },
@@ -116,7 +116,7 @@ const EmpreendimentosSingle = () => {
     setLoading(true);
     try {
       const query = await axios
-        .delete(process.env.REACT_APP_APIURL + "/arquivo/" + fileId, {
+        .delete(import.meta.env.VITE_APIURL + "/arquivo/" + fileId, {
           headers: {
             authorization: localStorage.getItem("token") as any,
           },

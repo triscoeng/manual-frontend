@@ -1,14 +1,16 @@
+import { CircularProgress } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import "./login.scss";
-const logo = require("../../components/images/secure_login.svg");
+import logo from "../../components/images/secure_login.svg"
 
 const Login = () => {
   const [usuario, setUsuario] = useState();
   const [senha, setSenha] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleUserChange = (e: any) => {
@@ -21,62 +23,69 @@ const Login = () => {
   };
 
   const loginUser = async () => {
+    setIsLoading(true)
     await axios
-      .post(process.env.REACT_APP_APIURL + "/login", {
+      .post(import.meta.env.VITE_APIURL + "/login", {
         usuario: usuario,
         senha: senha,
       })
-      .then(async (r) => {
+      .then(async ({ data: { data, token } }) => {
         toast.success("Login Realizado com Sucesso");
-        localStorage.setItem("token", r.data.token);
-        localStorage.setItem("usuario", JSON.stringify(r.data.data.data));
-        localStorage.setItem("exp", r.data.data.exp);
+        localStorage.setItem("token", token);
+        localStorage.setItem("usuario", JSON.stringify(data));
+        localStorage.setItem("exp", data.exp);
         navigate("/admin");
       })
       .catch((err) => {
         toast.error(err.message);
+      })
+      .finally(() => {
+        setIsLoading(false)
       });
   };
 
   return (
     <div className="loginContainer">
       <div className="wrapper">
-        <p className="title">
-          Sistema de Manual do Proprietário <br />
-          <strong>Trisco Engenharia</strong>
-        </p>
-        <div className="innerWrapper">
-          <div className="illustration">
-            <img src={logo.default} />
-          </div>
-          <div className="content">
-            <div className="inputArea">
-              <div className="inputGroup">
-                <p className="inputCaption">Nome de Usuário:</p>
-                <input
-                  type="text"
-                  name="usuario"
-                  id="usuario"
-                  onChange={handleUserChange}
-                />
-              </div>
-              <div className="inputGroup">
-                <p className="inputCaption">Senha:</p>
-                <input
-                  type="password"
-                  name="senha"
-                  id="senha"
-                  onChange={handlePasswordChange}
-                />
-              </div>
+        <div className="illustration">
+          <img src={logo} alt="Login" />
+        </div>
+        <div className="content">
+          <p className="title">
+            Manual do Proprietário <br /> Login<br />
+
+          </p>
+          <div className="inputArea">
+            <div className="inputGroup">
+              <p className="inputCaption">Nome de Usuário:</p>
+              <input
+                type="text"
+                name="usuario"
+                id="usuario"
+                onChange={handleUserChange}
+              />
             </div>
-            <input
-              type="button"
-              value="ACESSAR"
-              onClick={() => {
-                loginUser();
-              }}
-            />
+            <div className="inputGroup">
+              <p className="inputCaption">Senha:</p>
+              <input
+                type="password"
+                name="senha"
+                id="senha"
+                onChange={handlePasswordChange}
+              />
+            </div>
+            {
+              isLoading ?
+                <CircularProgress />
+                :
+                <input
+                  type="button"
+                  value="Login"
+                  onClick={() => {
+                    loginUser();
+                  }}
+                />
+            }
           </div>
         </div>
       </div>

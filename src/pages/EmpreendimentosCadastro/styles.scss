@@ -4,6 +4,56 @@
   }
 }
 
+form {
+  .MuiFormControl-root {
+    margin: 8px 0;
+    box-shadow: 0 3px 5px rgb(0 0 0 / 0.1);
+  }
+
+}
+
+.imageArea {
+  margin: 8px 0;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: rgba(201, 201, 201, 0.1);
+  box-shadow: 0 3px 5px rgb(0 0 0 / 0.1);
+
+
+  p {
+    font-size: 16px;
+
+    span {
+      display: block;
+      font-size: 10px
+    }
+  }
+
+  svg {
+    display: flex;
+    margin: 0 auto;
+  }
+
+  .image {
+    border-radius: 4px;
+    margin-top: 12px;
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  .imageArea_inner {
+    position: relative;
+
+    span {
+      position: absolute;
+      padding: 12px;
+      right: 0;
+      top: 0;
+    }
+  }
+
+}
+
 .inputFileCustom {
   input[type="file"] {
     display: none;
@@ -22,37 +72,40 @@
     border-radius: 5px;
   }
 }
+
 .filesUploaded {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  gap: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  align-items: flex-start;
-  justify-content: center;
-  background-color: #00104e;
-  border-radius: 10px;
-  padding: 10px;
-  width: 350px;
 }
+
 .file {
   display: flex;
   width: 100%;
   align-items: center;
 }
+
 .fileIcon {
-  color: #fff;
+  color: #333
 }
+
 .fileText {
   font-weight: 300;
-  color: #fff;
+  color: #333;
   padding-left: 15px;
   align-self: flex-start;
   width: 100%;
 }
+
 .fileIconDelete {
   background-color: rgba(201, 201, 201, 0.5);
+
   border-radius: 15px;
-  font-size: 15px !important;
   justify-self: flex-end;
+
   &:hover {
     background-color: red;
     cursor: pointer;

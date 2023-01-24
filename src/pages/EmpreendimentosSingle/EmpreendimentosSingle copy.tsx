@@ -27,7 +27,7 @@ const EmpreendimentosSingle = () => {
 
   const [newFiles, setNewFiles] = useState([]);
 
-  const empData = useFetchData(process.env.REACT_APP_APIURL + '/empreendimento/' + idEmpreendimento, 'GET')
+  const empData = useFetchData(import.meta.env.VITE_APIURL + '/empreendimento/' + idEmpreendimento, 'GET')
 
   useEffect(() => {
     console.log(empData)
@@ -38,7 +38,7 @@ const EmpreendimentosSingle = () => {
     setLoading(true);
     await axios
       .get(
-        process.env.REACT_APP_APIURL + "/empreendimento/" + idEmpreendimento,
+        import.meta.env.VITE_APIURL + "/empreendimento/" + idEmpreendimento,
         {
           headers: {
             authorization: localStorage.getItem("token") as any,
@@ -57,7 +57,7 @@ const EmpreendimentosSingle = () => {
 
   const getConstrutorasList = async () => {
     axios
-      .get(process.env.REACT_APP_APIURL + "/construtoras/list", {
+      .get(import.meta.env.VITE_APIURL + "/construtoras/list", {
         headers: {
           authorization: localStorage.getItem("token") as any,
         },
@@ -119,7 +119,7 @@ const EmpreendimentosSingle = () => {
     setLoading(true);
     try {
       await axios
-        .post(process.env.REACT_APP_APIURL + "/empreendimento/edit", form, {
+        .post(import.meta.env.VITE_APIURL + "/empreendimento/edit", form, {
           headers: {
             authorization: localStorage.getItem("token") as any,
           },
@@ -140,7 +140,7 @@ const EmpreendimentosSingle = () => {
     setLoading(true);
     try {
       const query = await axios
-        .delete(process.env.REACT_APP_APIURL + "/arquivo/" + fileId, {
+        .delete(import.meta.env.VITE_APIURL + "/arquivo/" + fileId, {
           headers: {
             authorization: localStorage.getItem("token") as any,
           },

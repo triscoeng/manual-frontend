@@ -36,7 +36,7 @@ const Empreendimentos = () => {
   const getEmpreendimentosData = async () => {
     setIsLoading(true);
     await axios
-      .get(process.env.REACT_APP_APIURL + "/empreendimentos", {
+      .get(import.meta.env.VITE_APIURL + "/empreendimentos", {
         headers: {
           authorization: localStorage.getItem("token") as string,
         },
@@ -64,7 +64,7 @@ const Empreendimentos = () => {
       if (r.isConfirmed) {
         setIsLoading(true);
         axios
-          .delete(process.env.REACT_APP_APIURL + "/empreendimento/" + id, {
+          .delete(import.meta.env.VITE_APIURL + "/empreendimento/" + id, {
             headers: {
               authorization: localStorage.getItem("token") as any,
             },
@@ -141,9 +141,11 @@ const Empreendimentos = () => {
               ).map((row: any) => (
                 <TableRow key={row.id}>
                   <TableCell align="center" component="th" scope="row">
-                    {row.construtora.nome}
+                    <img className="construtora-image" src={`${import.meta.env.VITE_APIURL}/${row.construtora.logo}`} />
                   </TableCell>
-                  <TableCell align="center">{row.nomeEmpreendimento}</TableCell>
+                  <TableCell align="center">
+                    {row.nomeEmpreendimento}
+                  </TableCell>
                   <TableCell align="center">{row.Arquivos.length}</TableCell>
                   <TableCell align="center">
                     <>

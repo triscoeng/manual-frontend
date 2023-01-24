@@ -1,9 +1,7 @@
-import { AddCircleRounded, AddRounded, AutoGraph, RemoveRedEyeRounded } from "@mui/icons-material";
+import { AddCircleRounded, RemoveRedEyeRounded } from "@mui/icons-material";
 import { Button, CircularProgress } from "@mui/material";
-import axios from "axios";
 import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { FilterArea } from "../../components/FilterArea";
 import { LayoutContext } from "../../context/LayoutContext";
 import QrCodeGenerator from "../../utils/QrCodeGenerator";
@@ -16,11 +14,11 @@ const ViewQrCode = () => {
   const navigate = useNavigate()
   const layoutContext: any = useContext(LayoutContext);
   const [searchState, setSearchState]: any = useState({});
-  const qrCodeApiData: any = useFetchData(process.env.REACT_APP_APIURL + "/qrcode", "get")
+  const qrCodeApiData: any = useFetchData(import.meta.env.VITE_APIURL + "/qrcode", "get")
 
-  useEffect(() => {
-    console.log(qrCodeApiData)
-  }, [qrCodeApiData])
+  // useEffect(() => {
+  //   console.log(qrCodeApiData)
+  // }, [qrCodeApiData])
 
 
   useEffect(() => {
@@ -51,7 +49,7 @@ const ViewQrCode = () => {
               <span className="description">Empreendimento:</span>
               <p className="">{qrcode.empreendimento.label}</p>
               <span className="description">Endereço da URL Fixa (origem):</span>
-              <p className="">{process.env.REACT_APP_PUBLIC_URL}/qrcode/{qrcode.id}</p>
+              <p className="">{import.meta.env.VITE_PUBLIC_URL}/qrcode/{qrcode.id}</p>
               <span className="description">Endereço da URL (destino):</span>
               <p className="">{qrcode.url}</p>
             </div>

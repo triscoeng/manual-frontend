@@ -14,12 +14,12 @@ const Arquivos = () => {
   const [searchList, setSearchList] = useState([]);
   const [searchState, setSearchState]: any = useState();
 
-  const arqList: any = useFetchData(process.env.REACT_APP_APIURL + '/arquivos', 'GET')
+  const arqList: any = useFetchData(import.meta.env.VITE_APIURL + '/arquivos', 'GET')
 
   const handleFilterButton = async () => {
     console.log('entrou')
     const query = new URLSearchParams(searchState)
-    const fetchdata = await axios.get(process.env.REACT_APP_APIURL + '/arquivos?' + query, {
+    const fetchdata = await axios.get(import.meta.env.VITE_APIURL + '/arquivos?' + query, {
       headers: {
         'authorization': localStorage.getItem('token') as any
       }

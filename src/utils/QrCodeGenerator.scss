@@ -1,0 +1,34 @@
+.qrCode {
+  position: relative;
+  display: inline-block;
+
+  &:hover {
+
+    >span {
+      background-color: rgba(0, 0, 0, 0.25);
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  span {
+    display: none;
+    cursor: pointer;
+    color: #fff
+  }
+}
+
+
+
+canvas {
+  display: flex;
+  align-self: center;
+  max-width: 65px;
+
+}

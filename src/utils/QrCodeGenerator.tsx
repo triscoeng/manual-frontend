@@ -3,15 +3,17 @@ import QRCodeStyling from "qr-code-styling";
 import { EditRounded, SaveRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
+import "./QrCodeGenerator.scss"
+
 const QrCodeGenerator = ({ data }: any) => {
 
-
+  console.log(data)
   const navigate = useNavigate()
-
   const qrCode = new QRCodeStyling({
     width: 1024,
     height: 1024,
-    data: process.env.REACT_APP_PUBLIC_URL + '/qrcode/' + data.id,
+    image: import.meta.env.VITE_APIURL + "/" + data.rest.empreendimento.construtora.logo,
+    data: import.meta.env.VITE_PUBLIC_URL + '/qrcode/' + data.id,
     margin: 0,
     qrOptions: {
       typeNumber: 0,
@@ -20,8 +22,7 @@ const QrCodeGenerator = ({ data }: any) => {
     },
     imageOptions: {
       hideBackgroundDots: true,
-      imageSize: 1,
-      margin: 0,
+      margin: 20,
     },
     dotsOptions: {
       type: "extra-rounded",
@@ -40,14 +41,21 @@ const QrCodeGenerator = ({ data }: any) => {
   });
 
   useEffect(() => {
-    console.log(qrCode)
     qrCode.append(document.getElementById(data.id) as any);
   }, []);
 
   return (
-    <>
-      <div id={data.id} className="qrCode">
-        <div className="qrCode_actions">
+
+    <div id={data.id} className="qrCode">
+      <span onClick={() => {
+        qrCode.download({
+          name: "QRCODE_" + data.url,
+          extension: "jpeg"
+        })
+      }}>
+        <SaveRounded />
+      </span>
+      {/* <div className="qrCode_actions">
           <span className="edit" onClick={() => navigate(`./${data.id}`, { state: data })}>
             <EditRounded />
           </span>
@@ -59,8 +67,7 @@ const QrCodeGenerator = ({ data }: any) => {
           }}>
             <SaveRounded />
           </span>
-        </div>
-      </div>
+        </div> */}
       {/* <button
         onClick={() => {
           qrCode.download({
@@ -71,7 +78,7 @@ const QrCodeGenerator = ({ data }: any) => {
       >
         Download do QRCode
       </button> */}
-    </>
+    </div>
   );
 };
 

@@ -1,11 +1,9 @@
 .contentContainer {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
   padding: 10px;
   -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   border-radius: 10px;
+  height: 100%;
 
   h2 {
     padding: 15px;
@@ -32,6 +30,12 @@
 
       .red {
         background-color: #d6675a;
+      }
+
+      .construtora-image {
+        max-width: 100px;
+        max-height: 80px;
+        object-fit: scale-down;
       }
     }
   }

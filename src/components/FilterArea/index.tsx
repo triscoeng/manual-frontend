@@ -1,7 +1,5 @@
-import { useState, useEffect, Suspense } from 'react';
-import AsyncSelect, { useAsync } from 'react-select/async';
+import { useState, Suspense } from 'react';
 import { Button } from "@mui/material";
-import axios from 'axios';
 import Select from 'react-select';
 import { DeleteRounded } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom'
@@ -11,7 +9,7 @@ import './styles.scss';
 export function FilterArea({ setState, state, onPressFilter }: any) {
 
   const [empreendimentoList, setEmpreendimentoList]: any = useState();
-  const companies: any = useFetchData(process.env.REACT_APP_APIURL + '/construtoras/list', 'get', {})
+  const companies: any = useFetchData(import.meta.env.VITE_APIURL + '/construtoras/list', 'get', {})
 
   const location = useLocation().pathname
   // const { state: tempFilesArray } = { state }

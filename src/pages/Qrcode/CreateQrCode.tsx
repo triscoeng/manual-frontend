@@ -1,9 +1,18 @@
-import { AddCircleRounded, CancelRounded, CheckBox, DeleteRounded } from "@mui/icons-material";
-import { Button, Checkbox, CircularProgress, FilledInput, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, Radio, RadioGroup }
+import { AddCircleRounded, CancelRounded } from "@mui/icons-material";
+import {
+  Button,
+  CircularProgress,
+  FilledInput,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  InputLabel,
+  Radio,
+  RadioGroup
+}
   from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import AsyncSelect from "react-select/async"
 import Select from "react-select"
 import axios from "axios";
 
@@ -26,7 +35,7 @@ const CreateQrCode = () => {
   const [url, setUrl] = useState("");
 
   const [cadastroState, setCadastroState]: any = useState({ url: "" });
-  const companies: any = useFetchData(process.env.REACT_APP_APIURL + '/construtoras/list', 'GET')
+  const companies: any = useFetchData(import.meta.env.VITE_APIURL + '/construtoras/list', 'GET')
   const layoutContext: any = useContext(LayoutContext)
 
   useEffect(() => {
@@ -52,7 +61,7 @@ const CreateQrCode = () => {
 
 
   const handleSubmit = async () => {
-    await axios.post(process.env.REACT_APP_APIURL + "/qrcode/", cadastroState, {
+    await axios.post(import.meta.env.VITE_APIURL + "/qrcode/", cadastroState, {
       headers: {
         authorization: localStorage.getItem("token") as any,
       }

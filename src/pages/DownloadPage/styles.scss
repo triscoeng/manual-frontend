@@ -1,0 +1,59 @@
+.downloadWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #2C3E50;
+
+  img {
+    max-height: 50px;
+  }
+
+  .innerWrapper {
+    background-color: #2980B9;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    height: 18rem;
+    min-height: 18rem;
+    color: #fff;
+  }
+
+  .content {
+    display: flex;
+    height: 100%;
+    width: 380px;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+
+    h3 {
+      text-align: center;
+      font-weight: 900;
+      font-size: 2rem;
+    }
+
+    .header {
+      p {
+        font-weight: 300;
+        line-height: 1.5rem;
+        padding: 4px 0;
+      }
+    }
+
+    .counter {
+      display: flex;
+      align-items: center;
+
+      p {
+        color: #fff;
+        font-weight: 900;
+        font-size: 3.5rem;
+      }
+
+      span {
+        font-weight: 300;
+        font-size: 1rem;
+      }
+    }
+  }
+}

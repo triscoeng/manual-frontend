@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 
 const ProtectedRoutes = () => {
   // let auth = true;
-  const navigate = useNavigate();
   let auth = true; //   const [loading, isLoading] = useState(false);
   const token: any = localStorage.getItem("token");
   const exp: any = localStorage.getItem("exp");
@@ -14,7 +13,7 @@ const ProtectedRoutes = () => {
     localStorage.removeItem("usuario");
     localStorage.removeItem("exp");
     auth = false;
-    return <Navigate to="/login" />;
+    return <Navigate to="./" />;
   }
 
   if (!exp || !token) {

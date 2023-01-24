@@ -68,6 +68,7 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 }
 
 const Construtoras = () => {
+
   const layoutContext: any = useContext(LayoutContext);
   const [rows, setRows] = useState([]);
   const [page, setPage] = React.useState(0);
@@ -97,21 +98,24 @@ const Construtoras = () => {
   };
 
   const getConstrutoraList = async () => {
-    setLoading(true)
     await axios
-      .get(`${process.env.REACT_APP_APIURL}/construtoras`, {
+      .get(`${import.meta.env.VITE_APIURL}/construtoras`, {
         headers: {
           'authorization': localStorage.getItem("token") as any,
         },
       })
       .then(({ data }) => {
+        console.log(data)
         setRows(data);
-        setLoading(false)
       })
       .catch((err) => {
         toast.error(err.message);
-        setLoading(false)
       });
+  };
+
+
+  const handleInputChange = (e: any) => {
+    console.log(e)
   };
 
   const handleSingUp = async () => {
@@ -123,22 +127,28 @@ const Construtoras = () => {
       showCancelButton: true,
       focusConfirm: false,
       html: `
-      <div>
-        <p>Nome da Construtora</p>
-        <input id="swal-construtora" class="swal2-input">
-      </div>
-      <div>
-        <p>Nome do Contato</p>
-        <input id="swal-nomeContato" class="swal2-input">
-      </div>
-      <div>
-        <p>Email</p>
-        <input id="swal-email" class="swal2-input">
-      </div>
-      <div>
-        <p>Nome da Telefone</p>
-        <input id="swal-telefone" class="swal2-input">
-      </div>
+      <form>
+        <div>
+          <p>Nome da Construtora</p>
+          <input id="swal-construtora" class="swal2-input">
+        </div>
+        <div>
+          <p>Nome do Contato</p>
+          <input id="swal-nomeContato" class="swal2-input">
+        </div>
+        <div>
+          <p>Email</p>
+          <input id="swal-email" class="swal2-input">
+        </div>
+        <div>
+          <p>Nome da Telefone</p>
+          <input id="swal-telefone" class="swal2-input">
+        </div>
+        <div>
+          <p>Escolha o Logo da Construtora:</p>
+          <input id="swal-image" class="swal2-input" type="file" />
+        </div>
+      </form>
       `,
       preConfirm: (e: any) => {
         const construtora = (
@@ -154,20 +164,28 @@ const Construtoras = () => {
         const telefone = (
           document.getElementById("swal-telefone") as HTMLInputElement
         ).value;
+        const image = (
+          document.getElementById("swal-image") as HTMLInputElement
+        ).value;
+
 
         return {
           nome: construtora,
           nomeContato: nomeContato,
           email: email,
           telefone: telefone,
+          logo: image
         };
+
       },
     }).then(async (result) => {
+      console.log(result)
+      return null
       if (result.isConfirmed) {
         try {
           await axios
             .post(
-              process.env.REACT_APP_APIURL + "/construtora/add",
+              import.meta.env.VITE_APIURL + "/construtora",
               result.value,
               {
                 headers: {
@@ -193,7 +211,7 @@ const Construtoras = () => {
   const handleDelete = async (id: any) => {
     try {
       await axios
-        .delete(process.env.REACT_APP_APIURL + "/construtora/" + id, {
+        .delete(import.meta.env.VITE_APIURL + "/construtora/" + id, {
           headers: {
             authorization: localStorage.getItem("token") as any,
           },
@@ -208,8 +226,11 @@ const Construtoras = () => {
   };
 
   useEffect(() => {
+    setLoading(true)
     layoutContext.setNavbar_title("Lista de Construtoras Cadastradas");
-    getConstrutoraList();
+    Promise.all([getConstrutoraList()]).then((a) => {
+      setLoading(false)
+    })
   }, [updateTrigger]);
 
 
@@ -221,14 +242,17 @@ const Construtoras = () => {
       <h2>Construtoras Cadastradas</h2>
 
       <div className="tableContainer">
-        <Button
-          variant="contained"
-          startIcon={<AddCircleRoundedIcon />}
-          style={{ marginBottom: "10px" }}
-          onClick={handleSingUp}
-        >
-          Cadastrar
-        </Button>
+        <Link to="./novo">
+          <Button
+            variant="contained"
+            startIcon={<AddCircleRoundedIcon />}
+            style={{ marginBottom: "10px" }}
+            onClick={() => {
+            }}
+          >
+            Cadastrar
+          </Button>
+        </Link>
         <div className="filterWrapper">
           {rows.length > 0 ? <FilterArea setState={setRows} state={rows} /> : ''}
         </div>
@@ -262,7 +286,8 @@ const Construtoras = () => {
             ).map((row: any) => (
               <TableRow key={row.id}>
                 <TableCell align="center" component="th" scope="row">
-                  {row.nome}
+                  <img className="construtora-image" src={`http://localhost:4003/${row.logo}`} />
+                  {/* {row.nome} */}
                 </TableCell>
                 <TableCell align="center">{row.nomeContato}</TableCell>
                 <TableCell align="center">{row.telefone}</TableCell>

@@ -62,7 +62,7 @@ const ConstrutorasSingle = (props: any) => {
       try {
         setLoading(true);
         axios
-          .put(process.env.REACT_APP_APIURL + "/construtora/edit", queryData, {
+          .put(import.meta.env.VITE_APIURL + "/construtora/edit", queryData, {
             headers: {
               authorization: token,
             },
@@ -135,7 +135,7 @@ const ConstrutorasSingle = (props: any) => {
   const getConstrutoraData = async () => {
     try {
       await axios
-        .get(process.env.REACT_APP_APIURL + "/construtora/" + id, {
+        .get(import.meta.env.VITE_APIURL + "/construtora/" + id, {
           headers: {
             authorization: token,
           },

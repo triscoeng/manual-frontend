@@ -1,0 +1,182 @@
+.paginadousuario_container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+
+  .subtitle {
+    color: rgb(32, 52, 75);
+    font-family: 'Sifonn Pro';
+    font-weight: 900;
+    font-size: 2rem;
+    padding: 24px 0;
+  }
+
+  header {
+    color: #fff;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: rgb(32, 52, 75);
+
+    img {
+      max-height: 60px;
+    }
+  }
+
+  .main {
+    display: flex;
+    padding-top: 4px;
+    flex: 1;
+  }
+
+  .sidebar {
+    flex: 0.5;
+    gap: 12px;
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(32, 52, 75);
+
+    .construtora_logo,
+    .empreendimento_logo {
+      max-width: 100px;
+      max-height: auto;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      gap: 12px;
+
+      a {
+        cursor: pointer;
+        border-radius: 4px;
+        color: rgb(32, 52, 75);
+        padding: 0.5rem;
+        background-color: #fff;
+      }
+
+      .disable {
+        cursor: not-allowed;
+        color: #e1e1e1
+      }
+
+
+    }
+
+
+  }
+
+  .content {
+    flex: 3;
+    background-color: #f9f9f9;
+    margin: 0 24px;
+    padding: 0 4px;
+
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+
+      h1 {
+        color: rgb(32, 52, 75);
+        font-family: "Sifonn Pro";
+        font-weight: 900;
+        font-size: 2rem;
+        padding: 24px 0;
+        text-transform: uppercase;
+        text-align: center;
+      }
+
+      p {
+        font-size: 1.1rem;
+        font-weight: 300;
+
+      }
+    }
+
+    .manual_header {
+      padding-top: 24px;
+      text-align: center;
+
+      .text {
+        color: rgb(32, 52, 75);
+        font-family: 'League Spartan', sans-serif;
+        font-weight: 100;
+        line-height: 1.2;
+        font-size: 1.5rem;
+      }
+    }
+
+    .files {
+
+
+      h3 {
+        margin: 24px 0;
+        text-transform: uppercase;
+        font-family: 'Sifonn Pro';
+        font-size: 1.6rem;
+        text-align: center;
+        color: #7bbafe
+      }
+
+      .fileArea {
+        display: flex;
+        border-radius: 12px;
+        padding: 12px 0;
+        margin: 12px 0;
+        background-color: rgb(32, 52, 75);
+        justify-content: space-evenly;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .fileNode {
+          text-align: center;
+          justify-content: center;
+          max-width: 200px;
+          min-width: 200px;
+          flex-wrap: wrap;
+          background-color: #20344b;
+          padding: 8px;
+          border-radius: 12px;
+
+          &:hover {
+            background-color: #304e71
+          }
+
+          p {
+            color: #fff;
+            flex-wrap: wrap;
+          }
+        }
+      }
+
+
+    }
+
+    .contatoWrapper {
+      font-size: 1.2rem;
+
+      .contatoGroupFlex {
+        display: flex;
+        gap: 12px;
+        margin: 12px 0;
+
+        p {
+          font-weight: 600;
+        }
+
+        span {
+          font-weight: 300;
+        }
+      }
+    }
+
+
+  }
+}

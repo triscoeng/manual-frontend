@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { LayoutContextProvider } from "./context/LayoutContext";
 import Login from "./pages/Login";
 import Construtoras from "./pages/Construtoras/Construtoras";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
@@ -8,31 +7,45 @@ import ConstrutorasSingle from "./pages/ConstrutorasSingle/ConstrutorasSingle";
 import Empreendimentos from "./pages/Empreendimentos/Empreendimentos";
 import EmpreendimentosSingle from "./pages/EmpreendimentosSingle/EmpreendimentosSingle";
 import EmpreendimentosCadastro from "./pages/EmpreendimentosCadastro/EmpreendimentosCadastro";
-import DownloadFileRoute from "./utils/DownloadFileRoute";
+import DownloadFileRoute from "./pages/DownloadPage";
 import Arquivos from "./pages/Arquivos/Arquivos";
 import CreateQrCode from "./pages/Qrcode/CreateQrCode";
 import ViewQrCode from "./pages/Qrcode/ViewQrCode";
 import EditQrCode from "./pages/Qrcode/EditQrCode";
-import "./app.scss";
-import New from "./pages/New";
 import Home from "./pages/Home/Home";
-import { ApiContext, ApiContextBuilder } from "./context/ApiContext";
+import { LayoutContextProvider } from "./context/LayoutContext";
+import { ApiContextBuilder } from "./context/ApiContext";
+import "./app.scss";
+import { ToastContainer } from "react-toastify";
+import ConstrutorasNew from "./pages/ConstrutorasNew/ConstrutorasNew";
+import Unidades from "./pages/Unidades/Unidades";
+import UnidadesForm from "./pages/Unidades/UnidadesForm";
 
 function App() {
   return (
     <LayoutContextProvider>
       <ApiContextBuilder>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/qrcode">
-            <Route path=":id" element={<DownloadFileRoute />} />
-          </Route>
+          <Route path="/qrcode/:id" element={<DownloadFileRoute />} />
           <Route element={<ProtectedRoutes />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Home />} />
               <Route path="construtoras">
                 <Route index element={<Construtoras />} />
+                <Route path="novo" element={<ConstrutorasNew />} />
                 <Route path=":id" element={<ConstrutorasSingle />} />
               </Route>
               <Route path="empreendimentos">
@@ -42,6 +55,10 @@ function App() {
                   path=":idEmpreendimento"
                   element={<EmpreendimentosSingle />}
                 />
+              </Route>
+              <Route path="unidades">
+                <Route index element={<Unidades />} />
+                <Route path="novo" element={<UnidadesForm />} />
               </Route>
               <Route path="arquivos" element={<Arquivos />} />
               <Route path="qrcode">

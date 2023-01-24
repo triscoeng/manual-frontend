@@ -1,0 +1,216 @@
+.form-group {
+  display: flex;
+}
+
+
+.checkbox-area {
+  display: flex;
+  align-items: center;
+
+  .span-inactive {
+    color: #d1d1d1
+  }
+
+}
+
+.files-area input[type=checkbox] {
+  all: revert
+}
+
+.tabela {
+  font-size: 1rem;
+  display: grid;
+  border-collapse: collapse;
+  min-width: 100%;
+  grid-template-columns:
+    (repeat(6, 0.3fr));
+
+  thead,
+  tbody,
+  tr {
+    display: contents;
+    text-align: center;
+  }
+
+  th,
+  td {
+    padding: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    background: #6c7ae0;
+    text-align: center;
+    font-weight: normal;
+    font-size: 1.1rem;
+    color: white;
+  }
+
+  th:last-child {
+    border: 0;
+  }
+
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #707070;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  tr:nth-child(even) td {
+    background: #f8f6ff;
+  }
+
+  .badge {
+    background-color: rgb(238, 83, 135);
+    color: white;
+    padding: 4px 8px;
+    text-align: center;
+    border-radius: 5px;
+  }
+
+  .badgeTwo {
+    background-color: rgb(136, 206, 46);
+  }
+}
+
+
+
+
+.btn-lock {
+  scale: 0.6;
+  display: inline-block;
+  background: #20cca5;
+  width: 64px;
+  height: 64px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 12px 0 0 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-lock svg {
+  fill: none;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.btn-lock svg .bling {
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 3;
+  stroke-dashoffset: 15;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.btn-lock svg .lock {
+  stroke: #fff;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 36;
+  -webkit-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+}
+
+.btn-lock svg .lockb {
+  fill: #fff;
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  -webkit-transform: rotate(8deg);
+  -ms-transform: rotate(8deg);
+  transform: rotate(8deg);
+  -webkit-transform-origin: 14px 20px;
+  -ms-transform-origin: 14px 20px;
+  transform-origin: 14px 20px;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+#inpLock {
+  display: none;
+}
+
+#inpLock:checked+label {
+  background: #ff5b5b;
+}
+
+#inpLock:checked+label svg {
+  opacity: 1;
+}
+
+#inpLock:checked+label svg .bling {
+  -webkit-animation: bling6132 0.3s linear forwards;
+  animation: bling6132 0.3s linear forwards;
+  -webkit-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}
+
+#inpLock:checked+label svg .lock {
+  stroke-dasharray: 48;
+  -webkit-animation: locked 0.3s linear forwards;
+  animation: locked 0.3s linear forwards;
+}
+
+#inpLock:checked+label svg .lockb {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+  -webkit-transform-origin: 14px 22px;
+  -ms-transform-origin: 14px 22px;
+  transform-origin: 14px 22px;
+}
+
+@-webkit-keyframes bling6132 {
+  50% {
+    stroke-dasharray: 3;
+    stroke-dashoffset: 12;
+  }
+
+  100% {
+    stroke-dasharray: 3;
+    stroke-dashoffset: 9;
+  }
+}
+
+@keyframes bling6132 {
+  50% {
+    stroke-dasharray: 3;
+    stroke-dashoffset: 12;
+  }
+
+  100% {
+    stroke-dasharray: 3;
+    stroke-dashoffset: 9;
+  }
+}
+
+@-webkit-keyframes locked {
+  50% {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+}
+
+@keyframes locked {
+  50% {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+}

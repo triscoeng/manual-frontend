@@ -8,31 +8,35 @@ import {
 import AsyncSelect from "react-select/async"
 import Select from "react-select"
 import useFetchData from "../../utils/useFetchData";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import FilePresentIcon from "@mui/icons-material/FilePresent";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import ImageIcon from '@mui/icons-material/Image';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import "./styles.scss";
 
 const EmpreendimentosCadastro = () => {
+  const [formState, setFormState]: any = useState({})
   const [uploadedFiles, setUploadedFiles]: any = useState([]);
   const [fileLimit, setFileLimit] = useState(false);
-  const [construtoraSelected, setConstrutoraSelected]: any = useState("");
-  const [nomeEmpreendimento, setNomeEmpreendimento]: any = useState("");
-  const [cep, setCep]: any = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const [construtorasData, setConstrutorasData] = useState([]);
 
-  const companies: any = useFetchData(process.env.REACT_APP_APIURL + "/construtoras/list", 'GET')
+  const [image, setImage]: any = useState();
+
+  const companies: any = useFetchData(import.meta.env.VITE_APIURL + "/construtoras/list", 'GET')
 
   const handleSubmitRequest = async (data: any) => {
+    // for (var pair of data.entries()) {
+    //   console.log(pair[0] + ', ' + pair[1]);
+    // }
     setIsLoading(true);
     await axios
-      .post(process.env.REACT_APP_APIURL + "/empreendimento/add", data, {
+      .post(import.meta.env.VITE_APIURL + "/empreendimentos", data, {
         headers: {
           authorization: localStorage.getItem("token") as string,
         },
@@ -43,7 +47,7 @@ const EmpreendimentosCadastro = () => {
         window.history.back()
       })
       .catch((err) => {
-        toast.error(err.message);
+        return toast.error(err.response.data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -51,15 +55,21 @@ const EmpreendimentosCadastro = () => {
   };
 
   const handleSubmitEvent = async (e: any) => {
-    const data = new FormData();
-    data.append("idConstrutora", construtoraSelected);
-    data.append("nomeEmpreendimento", nomeEmpreendimento);
-    data.append("cep", cep);
-    uploadedFiles.map((file: any) => data.append("files", file));
+    e.preventDefault()
+    const formData = new FormData();
+    formData.append("idConstrutora", formState.idConstrutora);
+    formData.append("nomeEmpreendimento", formState.nomeEmpreendimento);
+    formData.append("cep", formState.cep);
+    if (formState.logo) {
+      formData.append('logo', formState.logo)
+    }
+    if (formState.files) {
+      formState.files.map((file: any) => formData.append("manuais", file));
+    }
     try {
-      await handleSubmitRequest(data);
+      await handleSubmitRequest(formData);
     } catch (error: any) {
-      return toast.error(error.message);
+      return toast.error(error.response);
     }
   };
 
@@ -73,11 +83,16 @@ const EmpreendimentosCadastro = () => {
     console.log(indexFile);
     const newArray = [...uploadedFiles];
     newArray.splice(indexFile, 1);
-    setUploadedFiles(newArray);
+    setFormState((prev: any) => (
+      {
+        ...prev,
+        files: newArray
+      }
+    ))
   };
 
   const handleUploadFiles = (files: any) => {
-    const MAX_COUNT = 5;
+    const MAX_COUNT = 6;
     const uploaded: any = [...uploadedFiles];
     let limitExceeded = false;
     files.some((file: any) => {
@@ -93,12 +108,17 @@ const EmpreendimentosCadastro = () => {
         }
       }
     });
-    if (!limitExceeded) setUploadedFiles(uploaded);
+    if (!limitExceeded) setFormState((prev: any) => (
+      {
+        ...prev,
+        files: uploaded
+      }
+    ));
   };
 
   const getConstrutorasData = async () => {
     await axios
-      .get(process.env.REACT_APP_APIURL + "/construtoras/list", {
+      .get(import.meta.env.VITE_APIURL + "/construtoras/list", {
         headers: {
           authorization: localStorage.getItem("token") as any,
         },
@@ -116,45 +136,49 @@ const EmpreendimentosCadastro = () => {
     };
   }, []);
 
-  const customStyles = {
-    option: (provided: any, state: any) => ({
-      ...provided,
-      borderBottom: "1px dotted pink",
-      color: state.isSelected ? "#fff" : "#0001a6",
-      padding: 10,
-    }),
-    control: (provided: any, state: any) => {
-      return {
-        ...provided,
-        backgroundColor: state.isDisabled ? "#00104e" : "#FFF",
+  const convertToBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      if (!file) {
+        alert("Please select an image");
+      } else {
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
+      }
+      fileReader.onerror = (error) => {
+        reject(error);
       };
-    },
-    singleValue: (provided: any, state: any) => {
-      return {
-        ...provided,
-        color: state.isDisabled ? "#FFF" : "#00104e",
-        fontWeight: "700",
-      };
-    },
-    // menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
+    });
   };
 
-  const mapResponseToValuesAndLabels = (data: any) => ({
-    value: data.id,
-    label: data.nome,
-  });
+  const handleImageChange = useCallback(
+    async (e: any) => {
+      const file = e.target.files[0]
+      const base64: any = await convertToBase64(file);
+      setImage({ file: file, base: base64 });
+      setFormState((prev: any) => (
+        {
+          ...prev,
+          logo: file
+        }
+      ))
+      e.target.value = "";
+    },
+    []
+  )
 
-  const getConstrutoraDataAsync: any = async (searchData: any, callback: any) => {
-    const data = await axios.get(process.env.REACT_APP_APIURL + "/construtoras/names", {
-      headers: {
-        authorization: localStorage.getItem("token") as any,
-      }
+  const handleInputChangeValue = useCallback((e: any) => {
+    setFormState((prev: any) => {
+      return (
+        {
+          ...prev,
+          [e.target.id]: e.target.value
+        }
+      )
     })
-      .then(result => result.data.map(mapResponseToValuesAndLabels))
-      .then(final => final.filter((i: any) => i.label.toLowerCase().includes(searchData.toLowerCase())))
-    callback(data);
-    return data
-  }
+  }, [])
 
   return (
     <div className="contentContainer">
@@ -187,9 +211,7 @@ const EmpreendimentosCadastro = () => {
                 }
               }}
               placeholder="Escolha a Construtora"
-              onChange={(opt: any) => setConstrutoraSelected(opt.value)}
-
-
+              onChange={(opt: any) => setFormState((prev: any) => ({ ...prev, idConstrutora: opt.value }))}
             />
           </FormControl>
           <FormControl fullWidth sx={{ m: 1 }} variant="filled">
@@ -198,64 +220,107 @@ const EmpreendimentosCadastro = () => {
             </InputLabel>
             <FilledInput
               id="nomeEmpreendimento"
-              onChange={(e: any) => setNomeEmpreendimento(e.target.value)}
+              onChange={handleInputChangeValue}
             />
           </FormControl>
           <FormControl fullWidth sx={{ m: 1 }} variant="filled">
             <InputLabel htmlFor="cep">CEP</InputLabel>
             <FilledInput
               id="cep"
-              onChange={(e: any) => setCep(e.target.value)}
+              onChange={handleInputChangeValue}
             />
           </FormControl>
-          <FormControl
-            fullWidth
-            sx={{ m: 1 }}
-            variant="filled"
-            className="inputFileCustom"
-          >
-            <label htmlFor="arquivos">ADICIONE ARQUIVOS</label>
-            <input
-              className="MuiInputBase-input MuiFilledInput-input css-10botns-MuiInputBase-input-MuiFilledInput-input"
-              id="arquivos"
-              type="file"
-              multiple
-              onChange={handleFileEvent}
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ m: 1 }}>
-            <h3>Arquivos Selecionados:</h3>
-            {uploadedFiles.length > 0 ? (
-              <div className="filesUploaded">
-                {uploadedFiles.map((file: any, index: any) => (
-                  <div className="file" key={index}>
-                    <FilePresentIcon className="fileIcon" />
-                    <p className="fileText">{file.name}</p>
-                    <ClearIcon
-                      className="fileIconDelete"
-                      onClick={() => {
-                        handleRemoveFileEvent(file);
-                      }}
-                    />
-                  </div>
-                ))}
+          <div className="imageArea">
+            <p>Selecione o logo do empreendimento:
+              <span>(Ele será usado na criação do QRCode, caso não haja será utilizado o logo da construtora.)</span>
+            </p>
+
+            {image ?
+              <div className="imageArea_inner">
+                <span>
+                  <ClearIcon className="fileIconDelete" onClick={() => {
+                    setImage(null)
+                    setFormState((prev: any) => (
+                      {
+                        ...prev,
+                        logo: null
+                      }
+                    ))
+                  }} />
+                </span>
+                <img src={image.base} className="image" />
               </div>
-            ) : (
-              <p className="">Nenhum arquivo selecionado</p>
-            )}
-          </FormControl>
-          <FormControl>
+              :
+              <Button
+                variant="contained"
+                sx={{ m: 1 }}
+                startIcon={<ImageIcon />}
+                component='label'
+                onChange={handleImageChange}
+              >
+                Imagem
+                <input
+                  id="imagens"
+                  type="file"
+                  name="image"
+                  accept="image/*, png, jpeg, jpg"
+                  hidden />
+              </Button>
+            }
+          </div>
+          <div className="imageArea">
+            <p>Selecione todos os arquivos para este empreendimento:
+              <span>Você pode enviar vários ao mesmo tempo segurando a tecla CTRL.</span>
+            </p>
             <Button
               variant="contained"
+              color="success"
               sx={{ m: 1 }}
-              startIcon={
-                isLoading ? <CircularProgress /> : <AddCircleRoundedIcon />
-              }
-              onClick={handleSubmitEvent}
+              startIcon={<FilePresentIcon />}
+              component='label'
+              onChange={handleFileEvent}
             >
-              Cadastrar
+              Arquivos
+              <input
+                id='arquivos'
+                multiple
+                type="file"
+                name="files"
+                accept="application/pdf, application/*, richtext, plain, "
+                hidden />
             </Button>
-          </FormControl>
+            <FormControl fullWidth sx={{ m: 1 }}>
+              {formState.files ? (
+                <div className="filesUploaded">
+                  {formState.files.map((file: any, index: any) => (
+                    <div className="file" key={index}>
+                      <PictureAsPdfIcon className="fileIcon" />
+                      <p className="fileText">{file.name}</p>
+                      <ClearIcon
+                        className="fileIconDelete"
+                        onClick={() => {
+                          handleRemoveFileEvent(file);
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
+            </FormControl>
+          </div>
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ marginTop: '12px' }}
+            startIcon={
+              isLoading ? <CircularProgress /> : <AddCircleRoundedIcon />
+            }
+            onClick={handleSubmitEvent}
+          >
+            Cadastrar
+          </Button>
         </form>
       </div>
     </div>

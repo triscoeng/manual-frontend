@@ -1,5 +1,5 @@
 import { AddCircleRounded, CancelRounded, DeleteRounded } from "@mui/icons-material";
-import { Button, Checkbox, FilledInput, FormControl, FormControlLabel, FormGroup, InputLabel, Radio, RadioGroup }
+import { Button, FilledInput, FormControl, FormControlLabel, FormGroup, InputLabel, Radio, RadioGroup }
   from "@mui/material";
 import { red } from "@mui/material/colors";
 import axios from "axios";
@@ -41,7 +41,7 @@ const EditQrCode = () => {
       cancelButtonText: "Cancelar"
     }).then(async (r: any) => {
       if (r.isConfirmed) {
-        const request: any = await axios.delete(process.env.REACT_APP_APIURL + '/qrcode/' + data.id, {
+        const request: any = await axios.delete(import.meta.env.VITE_APIURL + '/qrcode/' + data.id, {
           headers: {
             'authorization': localStorage.getItem("token") as any
           }
@@ -58,7 +58,7 @@ const EditQrCode = () => {
   }
 
   const handleSubmit = async () => {
-    await axios.put(process.env.REACT_APP_APIURL + '/qrcode/' + data.id, editState, {
+    await axios.put(import.meta.env.VITE_APIURL + '/qrcode/' + data.id, editState, {
       headers: {
         'authorization': localStorage.getItem('token') as any
       }

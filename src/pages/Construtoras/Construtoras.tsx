@@ -286,7 +286,7 @@ const Construtoras = () => {
             ).map((row: any) => (
               <TableRow key={row.id}>
                 <TableCell align="center" component="th" scope="row">
-                  <img className="construtora-image" src={`http://localhost:4003/${row.logo}`} />
+                  <img className="construtora-image" src={`${import.meta.env.VITE_APIURL}/${row.logo}`} />
                   {/* {row.nome} */}
                 </TableCell>
                 <TableCell align="center">{row.nomeContato}</TableCell>

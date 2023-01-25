@@ -1,8 +1,8 @@
-import { AddCircleOutline } from '@mui/icons-material'
+import { AddCircleOutline, ContentCopy } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import QrCodeGenerator from '../../utils/QrCodeGenerator'
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -70,7 +70,7 @@ export default function Unidades() {
               </tr>
             </thead>
             {unidadesList &&
-              unidadesList.map((unidade: IUnidade) => (
+              unidadesList.map((unidade: IUnidade, index: number) => (
                 <tr key={unidade.id}>
                   <td>
                     {unidade.nome}
@@ -92,8 +92,15 @@ export default function Unidades() {
                     </p>
                   </td>
                   <td>
-                    <p>{import.meta.env.VITE_PUBLIC_URL}/qrcode/{unidade.id}</p>
-                    <QrCodeGenerator data={{ id: unidade.id, url: `${import.meta.env.VITE_PUBLIC_URL}/qrcode/${unidade.id}`, rest: unidade }} />
+                    <div className=''>
+                      <QrCodeGenerator data={{ id: unidade.id, url: `${import.meta.env.VITE_PUBLIC_URL}/qrcode/${unidade.id}`, rest: unidade }} />
+                      <a className="tooltip" onClick={(e) => {
+                        navigator.clipboard.writeText(`${import.meta.env.VITE_PUBLIC_URL}/qrcode/${unidade.id}`)
+                      }} >
+                        <ContentCopy />
+                        <span className='tooltiptext'>CTRL+C</span>
+                      </a>
+                    </div>
                   </td>
                   <td>
                     <>

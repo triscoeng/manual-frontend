@@ -14,6 +14,7 @@
   header {
     color: #fff;
     display: flex;
+    width: 100%;
     justify-content: flex-end;
     align-items: center;
     gap: 12px;
@@ -27,8 +28,11 @@
 
   .main {
     display: flex;
-    padding-top: 4px;
     flex: 1;
+
+    @media only screen and (max-width: 475px) {
+      display: inline-block;
+    }
   }
 
   .sidebar {
@@ -39,6 +43,16 @@
     flex-direction: column;
     align-items: center;
     background-color: rgb(32, 52, 75);
+
+    @media only screen and (max-width: 600px) {
+      flex-direction: row;
+
+      .construtora_logo,
+      .empreendimento_logo {
+        display: none
+      }
+
+    }
 
     .construtora_logo,
     .empreendimento_logo {
@@ -74,6 +88,7 @@
   .content {
     flex: 3;
     background-color: #f9f9f9;
+    border-radius: 4px;
     margin: 0 24px;
     padding: 0 4px;
 
@@ -81,6 +96,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 24px 0;
 
 
       h1 {
@@ -88,9 +104,9 @@
         font-family: "Sifonn Pro";
         font-weight: 900;
         font-size: 2rem;
-        padding: 24px 0;
         text-transform: uppercase;
         text-align: center;
+        margin-bottom: 12px;
       }
 
       p {
@@ -101,7 +117,6 @@
     }
 
     .manual_header {
-      padding-top: 24px;
       text-align: center;
 
       .text {
@@ -176,7 +191,67 @@
         }
       }
     }
+  }
+
+  .mobile-menu::-webkit-scrollbar {
+    display: none;
+    /* for Chrome, Safari, and Opera */
+  }
+
+  .mobile-menu {
+    background-color: #f1f1f1;
+    margin: 12px 0;
+    display: flex;
+    -ms-overflow-style: none;
+    overflow-x: scroll;
+    scrollbar-width: none;
 
 
+    .mobile-link {
+      margin: 18px;
+      padding: 18px;
+      border-radius: 4px;
+      background-color: #20344b;
+      text-align: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      min-width: 120px;
+    }
+
+    .disable {
+      background-color: #d1d1d1;
+    }
+
+    a:active {
+      background-color: #304e71
+    }
+
+    svg {
+      font-size: 1.8rem;
+      color: #fff
+    }
+
+    p {
+      color: #fff;
+      text-transform: uppercase;
+      word-wrap: break-word;
+    }
+
+
+  }
+
+  .footer {
+    background-color: #304e71;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      color: #fff
+    }
   }
 }

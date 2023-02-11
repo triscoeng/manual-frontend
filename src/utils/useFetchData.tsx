@@ -12,7 +12,7 @@ export default function useFetchData(url: any, method?: any, data?: any) {
       try {
         const resp = await axios({
           method: method,
-          url: url,
+          url: import.meta.env.VITE_APIURL + url,
           data: data,
           headers: {
             'authorization': localStorage.getItem('token') as any

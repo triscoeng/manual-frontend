@@ -149,7 +149,7 @@ const Empreendimentos = () => {
                   <TableCell align="center">{row.Arquivos.length}</TableCell>
                   <TableCell align="center">
                     <>
-                      <Link to={`./${row.id}`}>
+                      <Link to={`./cadastro/${row.id}`} state={row}>
                         <VisibilityIcon className="actionIcons green" />
                       </Link>
                       <span

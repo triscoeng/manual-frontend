@@ -1,11 +1,15 @@
+import React from 'react'
 import { AddCircleOutline, ContentCopy } from '@mui/icons-material'
-import { Button } from '@mui/material'
+import { Button, CircularProgress, Icon } from '@mui/material'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import QrCodeGenerator from '../../utils/QrCodeGenerator'
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { LayoutContext } from '../../context/LayoutContext'
+import Swal from 'sweetalert2'
+import { toast } from 'react-toastify'
 
 interface IUnidade {
   nome: string,
@@ -21,7 +25,10 @@ interface IUnidade {
 
 export default function Unidades() {
 
+  const [isLoading, setIsLoading] = useState()
   const [unidadesList, setUnidadesList] = useState([])
+  const [trigger, setTrigger]: any = useState()
+  const layoutContext: any = React.useContext(LayoutContext);
 
   async function getUnidadesList() {
     await axios.get(import.meta.env.VITE_APIURL + '/unidades', {
@@ -29,15 +36,43 @@ export default function Unidades() {
         'Authorization': localStorage.getItem('token') as any
       }
     }).then(({ data }) => {
-      console.table(data)
       setUnidadesList(data)
     })
   }
 
-  useEffect(() => {
-    getUnidadesList()
+  const handleDeleteUnidade = async (id: string) => {
+    const modal = await Swal.fire({
+      title: 'Exclusão de Unidade',
+      icon: 'question',
+      backdrop: true,
+      text: "Você deseja excluir esta unidade? Após a operação concluída ela não poderá ser desfeita!",
+      showCancelButton: true,
+      cancelButtonColor: "green",
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Deletar",
+      confirmButtonColor: 'red',
+      showConfirmButton: true
+    })
+    if (modal.isConfirmed) {
+      await axios.delete(import.meta.env.VITE_APIURL + '/unidade/' + id, {
+        headers: {
+          'Authorization': localStorage.getItem('token')
+        }
+      }).then(async (r) => {
+        toast.success("Unidade removida com sucesso!")
+        setTrigger(!trigger)
+      })
+    } else {
+      toast.info("Operação Cancelada")
+    }
+  }
 
-  }, [])
+  useEffect(() => {
+    setIsLoading(true)
+    layoutContext.setNavbar_title("Lista de Unidades Cadastradas");
+    getUnidadesList().finally(() => setIsLoading(false))
+
+  }, [trigger])
 
   const navigate = useNavigate()
   return (
@@ -58,62 +93,56 @@ export default function Unidades() {
             </Button>
           </div>
 
-          <table className='tabela'>
-            <thead>
-              <tr>
-                <th>Nome da Unidade</th>
-                <th>Empreendimento</th>
-                <th>Construtora</th>
-                <th>Categoria</th>
-                <th>QR Code</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            {unidadesList &&
-              unidadesList.map((unidade: IUnidade, index: number) => (
-                <tr key={unidade.id}>
-                  <td>
-                    {unidade.nome}
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <span>{unidade.empreendimento.nomeEmpreendimento}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span >{unidade.empreendimento.construtora.nome}</span>
-                  </td>
-                  <td>
-                    <p
-                      style={{ textAlign: 'center' }}
-                      className={unidade.categoria === 0 ? 'badge' : ' badge badgeTwo'}
-                    >
-                      {unidade.categoria === 0 ? 'Padrao' : 'Privada'}
-                    </p>
-                  </td>
-                  <td>
-                    <div className=''>
-                      <QrCodeGenerator data={{ id: unidade.id, url: `${import.meta.env.VITE_PUBLIC_URL}/qrcode/${unidade.id}`, rest: unidade }} />
-                      <a className="tooltip" onClick={(e) => {
-                        navigator.clipboard.writeText(`${import.meta.env.VITE_PUBLIC_URL}/qrcode/${unidade.id}`)
-                      }} >
-                        <ContentCopy />
-                        <span className='tooltiptext'>CTRL+C</span>
-                      </a>
-                    </div>
-                  </td>
-                  <td>
-                    <>
-                      <Link to={`#`}>
-                        <VisibilityIcon className="actionIcons green" />
-                      </Link>
-                      <span
-                        onClick={() => {
-                        }}
+          {isLoading ? <CircularProgress /> :
+            <table className='tabela'>
+              <thead>
+                <tr>
+                  <th>Nome da Unidade</th>
+                  <th>Empreendimento</th>
+                  <th>Construtora</th>
+                  <th>Categoria</th>
+                  <th>QR Code</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              {unidadesList &&
+                unidadesList.map((unidade: IUnidade, index: number) => (
+                  <tr key={unidade.id}>
+                    <td>
+                      {unidade.nome}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span>{unidade.empreendimento.nomeEmpreendimento}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span >{unidade.empreendimento.construtora.nome}</span>
+                    </td>
+                    <td>
+                      <p
+                        style={{ textAlign: 'center' }}
+                        className={unidade.categoria === 0 ? 'badge' : ' badge badgeTwo'}
                       >
-                        <DeleteIcon className="actionIcons red" />
-                      </span>
-                      {/* <Button
+                        {unidade.categoria === 0 ? 'Padrao' : 'Privada'}
+                      </p>
+                    </td>
+                    <td>
+                      <div className=''>
+                        <QrCodeGenerator data={{ id: unidade.id, url: `${import.meta.env.VITE_PUBLIC_URL}/qrcode/${unidade.id}`, rest: unidade }} />
+                      </div>
+                    </td>
+                    <td>
+                      <>
+                        <Link to={`./${unidade.id}`} state={unidade}>
+                          <VisibilityIcon className="actionIcons green" />
+                        </Link>
+                        <span
+                          onClick={() => handleDeleteUnidade(unidade.id)}
+                        >
+                          <DeleteIcon className="actionIcons red" />
+                        </span>
+                        {/* <Button
                         onClick={() => navigate(`./${row.id}`)}
                         startIcon={
                           <VisibilityIcon className="actionIcons green" />
@@ -123,11 +152,12 @@ export default function Unidades() {
                         //   onClick={() => handleDelete(row.id) as any}
                         startIcon={<DeleteIcon className="actionIcons red" />}
                       /> */}
-                    </>
-                  </td>
-                </tr>
-              ))}
-          </table>
+                      </>
+                    </td>
+                  </tr>
+                ))}
+            </table>
+          }
         </div>
       </div>
     </>

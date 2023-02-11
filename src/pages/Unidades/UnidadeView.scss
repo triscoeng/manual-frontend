@@ -1,0 +1,33 @@
+.unidades {
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+
+  .buttonsWrapper {
+    display: flex;
+    gap: 8px;
+
+    .buttonUnidades {}
+
+  }
+
+  .alignCenter {
+    justify-content: center;
+  }
+
+  .unidadeGroup {
+    p {
+      font-weight: 300;
+    }
+
+    span {
+      font-weight: 600;
+    }
+    
+    .badge {
+      background-color: #999;
+      padding: 4px;
+      border-radius: 4px;
+    }
+  }
+}

@@ -9,7 +9,7 @@ import './styles.scss';
 export function FilterArea({ setState, state, onPressFilter }: any) {
 
   const [empreendimentoList, setEmpreendimentoList]: any = useState();
-  const companies: any = useFetchData(import.meta.env.VITE_APIURL + '/construtoras/list', 'get', {})
+  const companies: any = useFetchData('/construtoras/list', 'get', {})
 
   const location = useLocation().pathname
   // const { state: tempFilesArray } = { state }

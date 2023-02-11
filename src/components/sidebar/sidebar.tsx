@@ -7,27 +7,29 @@ import AddBusinessRoundedIcon from "@mui/icons-material/AddBusinessRounded";
 import FilePresentRoundedIcon from "@mui/icons-material/FilePresentRounded";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
 import HolidayVillageRoundedIcon from '@mui/icons-material/HolidayVillageRounded';
-import { QrCode2Rounded } from "@mui/icons-material";
+import { FileCopy, QrCode2Rounded } from "@mui/icons-material";
 
 const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="top">
         <Link to="/admin" style={{ textDecoration: "none" }}>
-          <span className="logo">triscoadmin</span>
+          <span className="logo">
+            <img src="/images/logo-trisco-white.png" alt="Logo Trisco Engenharia" />
+          </span>
         </Link>
       </div>
       <hr />
       <div className="center">
         <ul>
-          <p className="subtitle">Página Principal</p>
-          <li>
+          <li className="subtitle">Página Principal</li>
+          <li className="menu_links">
             <Link to="/admin" style={{ textDecoration: "none" }}>
               <DashboardIcon className="icon" />
               <span>Dashboard</span>
             </Link>
           </li>
-          <p className="subtitle">Cadastros</p>
+          <li className="subtitle">Cadastros</li>
           <li className="menu_links">
             <Link to="./construtoras" style={{ textDecoration: "none" }}>
               <HolidayVillageRoundedIcon className="icon" />
@@ -46,6 +48,12 @@ const Sidebar = () => {
               <span>Unidades</span>
             </Link>
           </li>
+          <li>
+            <Link to="./arquivos" style={{ textDecoration: "none" }}>
+              <FileCopy  className="icon"/>
+              <span>Arquivos</span>
+            </Link>
+          </li>
           {/* <li>
             <Link to="./arquivos" style={{ textDecoration: "none" }}>
               <FilePresentRoundedIcon className="icon" />
@@ -58,7 +66,7 @@ const Sidebar = () => {
               <span>QR Codes</span>
             </Link>
           </li> */}
-          <p className="subtitle">Admin</p>
+          <li className="subtitle">Admin</li>
           <li>
             <Link to="./usuarios" style={{ textDecoration: "none" }}>
               <ManageAccountsRoundedIcon className="icon" />

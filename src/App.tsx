@@ -20,6 +20,7 @@ import { ToastContainer } from "react-toastify";
 import ConstrutorasNew from "./pages/ConstrutorasNew/ConstrutorasNew";
 import Unidades from "./pages/Unidades/Unidades";
 import UnidadesForm from "./pages/Unidades/UnidadesForm";
+import UnidadeView from "./pages/Unidades/UnidadeView";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
               <Route path="empreendimentos">
                 <Route index element={<Empreendimentos />} />
                 <Route path="cadastro" element={<EmpreendimentosCadastro />} />
+                <Route path="cadastro/:id" element={<EmpreendimentosCadastro />} />
                 <Route
                   path=":idEmpreendimento"
                   element={<EmpreendimentosSingle />}
@@ -59,8 +61,11 @@ function App() {
               <Route path="unidades">
                 <Route index element={<Unidades />} />
                 <Route path="novo" element={<UnidadesForm />} />
+                <Route path=":id" element={<UnidadeView />} />
               </Route>
-              <Route path="arquivos" element={<Arquivos />} />
+              <Route path="arquivos" >
+                <Route index element={<Arquivos />} />
+              </Route>
               <Route path="qrcode">
                 <Route index element={<ViewQrCode />} />
                 <Route path="novo" element={<CreateQrCode />} />

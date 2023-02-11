@@ -14,7 +14,7 @@ const ViewQrCode = () => {
   const navigate = useNavigate()
   const layoutContext: any = useContext(LayoutContext);
   const [searchState, setSearchState]: any = useState({});
-  const qrCodeApiData: any = useFetchData(import.meta.env.VITE_APIURL + "/qrcode", "get")
+  const qrCodeApiData: any = useFetchData("/qrcode", "get")
 
   // useEffect(() => {
   //   console.log(qrCodeApiData)

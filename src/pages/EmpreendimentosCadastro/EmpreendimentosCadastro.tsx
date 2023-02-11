@@ -5,7 +5,6 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import AsyncSelect from "react-select/async"
 import Select from "react-select"
 import useFetchData from "../../utils/useFetchData";
 import { useState, useEffect, useCallback } from "react";
@@ -18,53 +17,92 @@ import ImageIcon from '@mui/icons-material/Image';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import "./styles.scss";
+import { useLocation } from "react-router-dom";
+import { SaveOutlined } from "@mui/icons-material";
 
 const EmpreendimentosCadastro = () => {
-  const [formState, setFormState]: any = useState({})
-  const [uploadedFiles, setUploadedFiles]: any = useState([]);
+  const { state: editModeData } = useLocation()
+  const [editMode, setEditMode] = useState(editModeData ? true : false)
+  const construtoraData: any = useFetchData('/construtoras/list', 'GET')
+
+  const [formState, setFormState]: any = useState(editMode ?
+    {
+      ...editModeData
+    }
+    : {})
+
+  const [removeFiles, setRemoveFiles]: any = useState([])
+  const [uploadedFiles, setUploadedFiles]: any = useState(editMode ? editModeData.Arquivos : []);
   const [fileLimit, setFileLimit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [construtorasData, setConstrutorasData] = useState([]);
 
   const [image, setImage]: any = useState();
 
-  const companies: any = useFetchData(import.meta.env.VITE_APIURL + "/construtoras/list", 'GET')
 
   const handleSubmitRequest = async (data: any) => {
     // for (var pair of data.entries()) {
     //   console.log(pair[0] + ', ' + pair[1]);
     // }
     setIsLoading(true);
-    await axios
-      .post(import.meta.env.VITE_APIURL + "/empreendimentos", data, {
-        headers: {
-          authorization: localStorage.getItem("token") as string,
-        },
-      })
-      .then((r) => {
-        console.log(r);
-        toast.success("Empreendimento cadastrado com sucesso");
-        window.history.back()
-      })
-      .catch((err) => {
-        return toast.error(err.response.data);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+
+    switch (editMode) {
+      case true:
+        console.log("MODO EDIT")
+        await axios
+          .patch(import.meta.env.VITE_APIURL + "/empreendimento/" + editModeData.id, data, {
+            headers: {
+              authorization: localStorage.getItem("token") as string,
+            },
+          })
+          .then((r) => {
+            return toast.success("Empreendimento editado com sucesso");
+            window.history.back()
+          })
+          .catch((err) => {
+            return toast.error(err.response.data);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+        break;
+      default:
+        await axios
+          .post(import.meta.env.VITE_APIURL + "/empreendimentos", data, {
+            headers: {
+              authorization: localStorage.getItem("token") as string,
+            },
+          })
+          .then((r) => {
+            return toast.success(`Empreendimento cadastrado com sucesso!`);
+            // window.history.back()
+          })
+          .catch((err) => {
+            return toast.error(err.response.data);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+        break;
+    }
   };
 
   const handleSubmitEvent = async (e: any) => {
     e.preventDefault()
     const formData = new FormData();
+    { editMode ? formData.append("idEmpreendimento", editModeData.id) : null }
+    { editMode ? formData.append("removeFile[]", JSON.stringify(removeFiles)) : null }
     formData.append("idConstrutora", formState.idConstrutora);
     formData.append("nomeEmpreendimento", formState.nomeEmpreendimento);
     formData.append("cep", formState.cep);
     if (formState.logo) {
       formData.append('logo', formState.logo)
     }
-    if (formState.files) {
-      formState.files.map((file: any) => formData.append("manuais", file));
+    if (formState.Arquivos.length > 0) {
+      for (var file of formState.Arquivos) {
+        if (file instanceof File) {
+          formData.append('manuais', file, file.name)
+        }
+      }
     }
     try {
       await handleSubmitRequest(formData);
@@ -79,25 +117,32 @@ const EmpreendimentosCadastro = () => {
   };
 
   const handleRemoveFileEvent = (file: any) => {
-    const indexFile = uploadedFiles.findIndex((f: any) => f.name === file.name);
-    console.log(indexFile);
-    const newArray = [...uploadedFiles];
+    const indexFile = !editMode ? formState.Arquivos.findIndex((f: any) => f.name === file.name) :
+      formState.Arquivos.findIndex((f: any) => f.id === file.id)
+    const newArray = [...formState.Arquivos];
     newArray.splice(indexFile, 1);
+    if (editMode) {
+      setRemoveFiles((prev: any) => (
+        [
+          ...prev,
+          { id: file.id, path: file.urlArquivo }
+        ]
+      ))
+    }
     setFormState((prev: any) => (
       {
         ...prev,
-        files: newArray
+        Arquivos: newArray
       }
     ))
   };
 
   const handleUploadFiles = (files: any) => {
     const MAX_COUNT = 6;
-    const uploaded: any = [...uploadedFiles];
+    const uploaded: any = !formState.Arquivos ? [] : [...formState.Arquivos];
     let limitExceeded = false;
     files.some((file: any) => {
       if (uploaded.findIndex((f: any) => f.name === file.name) === -1) {
-        console.log(file);
         uploaded.push(file);
         if (uploaded.length === MAX_COUNT) setFileLimit(true);
         if (uploaded.length > MAX_COUNT) {
@@ -111,30 +156,10 @@ const EmpreendimentosCadastro = () => {
     if (!limitExceeded) setFormState((prev: any) => (
       {
         ...prev,
-        files: uploaded
+        Arquivos: uploaded
       }
     ));
   };
-
-  const getConstrutorasData = async () => {
-    await axios
-      .get(import.meta.env.VITE_APIURL + "/construtoras/list", {
-        headers: {
-          authorization: localStorage.getItem("token") as any,
-        },
-      })
-      .then((r: any) => {
-        setConstrutorasData(r.data);
-      });
-  };
-
-  useEffect(() => {
-    return () => {
-      setIsLoading(true);
-      getConstrutorasData();
-      setIsLoading(false);
-    };
-  }, []);
 
   const convertToBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
@@ -180,148 +205,165 @@ const EmpreendimentosCadastro = () => {
     })
   }, [])
 
+
+  useEffect(() => {
+    console.log(formState.Arquivos)
+  }, [formState])
+
   return (
     <div className="contentContainer">
       <h2>Cadastro de Empreendimento:</h2>
       <div className="tableContainer">
-        <form action="#" encType="multipart/form-data">
-          <FormControl fullWidth sx={{ m: 1 }}>
-            <Select
-              options={companies.apiData}
-              styles={{
-                valueContainer: () => (
-                  {
-                    height: '55px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    paddingLeft: '5px'
-                  }),
-                control: (provided: any, state: any) => {
-                  return {
-                    ...provided,
-                    backgroundColor: '#F0F0F0',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-                  }
-                },
-                menu: (base: any) => {
-                  return {
-                    ...base,
-                    zIndex: 999
-                  }
-                }
-              }}
-              placeholder="Escolha a Construtora"
-              onChange={(opt: any) => setFormState((prev: any) => ({ ...prev, idConstrutora: opt.value }))}
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ m: 1 }} variant="filled">
-            <InputLabel htmlFor="nomeEmpreendimento">
-              Nome do Empreendimento
-            </InputLabel>
-            <FilledInput
-              id="nomeEmpreendimento"
-              onChange={handleInputChangeValue}
-            />
-          </FormControl>
-          <FormControl fullWidth sx={{ m: 1 }} variant="filled">
-            <InputLabel htmlFor="cep">CEP</InputLabel>
-            <FilledInput
-              id="cep"
-              onChange={handleInputChangeValue}
-            />
-          </FormControl>
-          <div className="imageArea">
-            <p>Selecione o logo do empreendimento:
-              <span>(Ele será usado na criação do QRCode, caso não haja será utilizado o logo da construtora.)</span>
-            </p>
-
-            {image ?
-              <div className="imageArea_inner">
-                <span>
-                  <ClearIcon className="fileIconDelete" onClick={() => {
-                    setImage(null)
-                    setFormState((prev: any) => (
+        {
+          construtoraData.isLoading ?
+            <CircularProgress />
+            :
+            <form action="#" encType="multipart/form-data">
+              <FormControl fullWidth sx={{ m: 1 }}>
+                <Select
+                  isDisabled={editModeData ? true : false}
+                  options={construtoraData.apiData}
+                  defaultValue={editModeData ? construtoraData.apiData.filter((v: any) => v.value === editModeData.idConstrutora) : null}
+                  placeholder="Escolha a Construtora"
+                  styles={{
+                    valueContainer: () => (
                       {
-                        ...prev,
-                        logo: null
+                        height: '55px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        paddingLeft: '5px'
+                      }),
+                    control: (provided: any, state: any) => {
+                      return {
+                        ...provided,
+                        backgroundColor: '#F0F0F0',
+                        borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
                       }
-                    ))
-                  }} />
-                </span>
-                <img src={image.base} className="image" />
+                    },
+                    menu: (base: any) => {
+                      return {
+                        ...base,
+                        zIndex: 999
+                      }
+                    }
+                  }}
+                  onChange={(opt: any) => setFormState((prev: any) => ({ ...prev, idConstrutora: opt.value }))}
+                />
+              </FormControl>
+              <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+                <InputLabel htmlFor="nomeEmpreendimento">
+                  Nome do Empreendimento
+                </InputLabel>
+                <FilledInput
+                  disabled={editMode ? true : false}
+                  id="nomeEmpreendimento"
+                  defaultValue={editMode ? editModeData.nomeEmpreendimento : null}
+                  onChange={handleInputChangeValue}
+                />
+              </FormControl>
+              <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+                <InputLabel htmlFor="cep">CEP</InputLabel>
+                <FilledInput
+                  id="cep"
+                  defaultValue={editMode ? editModeData.cep : null}
+                  onChange={handleInputChangeValue}
+                />
+              </FormControl>
+              <div className="imageArea">
+                <p>Selecione o logo do empreendimento:
+                  <span>(Ele será usado na criação do QRCode, caso não haja será utilizado o logo da construtora.)</span>
+                </p>
+                {image || formState.logo ?
+                  <div className="imageArea_inner">
+                    <span>
+                      <ClearIcon className="fileIconDelete" onClick={() => {
+                        setImage(null)
+                        setFormState((prev: any) => (
+                          {
+                            ...prev,
+                            logo: null
+                          }
+                        ))
+                      }} />
+                    </span>
+                    <img src={image ? image.base : import.meta.env.VITE_APIURL + '/' + formState.logo} className="image" />
+                  </div>
+                  :
+                  <Button
+                    variant="contained"
+                    sx={{ m: 1 }}
+                    startIcon={<ImageIcon />}
+                    component='label'
+                    onChange={handleImageChange}
+                  >
+                    Imagem
+                    <input
+                      id="imagens"
+                      type="file"
+                      name="image"
+                      accept="image/*, png, jpeg, jpg"
+                      hidden />
+                  </Button>
+                }
               </div>
-              :
+              <div className="imageArea">
+                <p>Selecione todos os arquivos para este empreendimento:
+                  <span>Você pode enviar vários ao mesmo tempo segurando a tecla CTRL.</span>
+                </p>
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{ m: 1 }}
+                  startIcon={<FilePresentIcon />}
+                  component='label'
+                  onChange={handleFileEvent}
+                >
+                  Arquivos
+                  <input
+                    id='arquivos'
+                    multiple
+                    type="file"
+                    name="files"
+                    accept="application/pdf, application/*, richtext, plain, "
+                    hidden />
+                </Button>
+                <FormControl fullWidth sx={{ m: 1 }}>
+                  {formState.Arquivos ? (
+                    <div className="filesUploaded">
+                      {formState.Arquivos.map((file: any, index: any) => {
+                        const isFile = file instanceof File
+                        return (
+                          <div className="file" key={index}>
+                            <PictureAsPdfIcon className="fileIcon" />
+                            <p className="fileText">{isFile ? file.name : file.nomeExibicao}</p>
+                            <ClearIcon
+                              className="fileIconDelete"
+                              onClick={() => {
+                                handleRemoveFileEvent(file);
+                              }}
+                            />
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </FormControl>
+              </div>
               <Button
                 variant="contained"
-                sx={{ m: 1 }}
-                startIcon={<ImageIcon />}
-                component='label'
-                onChange={handleImageChange}
+                fullWidth
+                sx={{ marginTop: '12px' }}
+                startIcon={
+                  isLoading ? <CircularProgress /> : editMode ? <SaveOutlined /> : <AddCircleRoundedIcon />
+                }
+                onClick={handleSubmitEvent}
               >
-                Imagem
-                <input
-                  id="imagens"
-                  type="file"
-                  name="image"
-                  accept="image/*, png, jpeg, jpg"
-                  hidden />
+                {editMode ? 'Editar' : 'Cadastrar'}
               </Button>
-            }
-          </div>
-          <div className="imageArea">
-            <p>Selecione todos os arquivos para este empreendimento:
-              <span>Você pode enviar vários ao mesmo tempo segurando a tecla CTRL.</span>
-            </p>
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ m: 1 }}
-              startIcon={<FilePresentIcon />}
-              component='label'
-              onChange={handleFileEvent}
-            >
-              Arquivos
-              <input
-                id='arquivos'
-                multiple
-                type="file"
-                name="files"
-                accept="application/pdf, application/*, richtext, plain, "
-                hidden />
-            </Button>
-            <FormControl fullWidth sx={{ m: 1 }}>
-              {formState.files ? (
-                <div className="filesUploaded">
-                  {formState.files.map((file: any, index: any) => (
-                    <div className="file" key={index}>
-                      <PictureAsPdfIcon className="fileIcon" />
-                      <p className="fileText">{file.name}</p>
-                      <ClearIcon
-                        className="fileIconDelete"
-                        onClick={() => {
-                          handleRemoveFileEvent(file);
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                ""
-              )}
-            </FormControl>
-          </div>
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{ marginTop: '12px' }}
-            startIcon={
-              isLoading ? <CircularProgress /> : <AddCircleRoundedIcon />
-            }
-            onClick={handleSubmitEvent}
-          >
-            Cadastrar
-          </Button>
-        </form>
+            </form>
+        }
       </div>
     </div>
   );

@@ -1,86 +1,90 @@
-import React, { useMemo, useEffect, useState, useLayoutEffect } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import './styles.scss'
-import { Box, Modal } from '@mui/material';
-import QrCodeGenerator from '../../utils/QrCodeGenerator';
-import { FilterArea } from '../../components/FilterArea';
+import { Link } from 'react-router-dom'
 import useFetchData from '../../utils/useFetchData';
-import { CircularProgress } from "@mui/material";
+import { LayoutContext } from '../../context/LayoutContext'
+import { AddCircleOutline, ContentCopy } from '@mui/icons-material'
+import { Button, CircularProgress, Icon } from '@mui/material'
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Swal from 'sweetalert2'
+import { toast } from 'react-toastify'
 
+
+import './Arquivos.scss';
 
 const Arquivos = () => {
 
-  const [fileList, setFileList]: any = useState([]);
-  const [searchList, setSearchList] = useState([]);
-  const [searchState, setSearchState]: any = useState();
+  const arquivos: any = useFetchData('/arquivos')
 
-  const arqList: any = useFetchData(import.meta.env.VITE_APIURL + '/arquivos', 'GET')
+  console.log(arquivos)
 
-  const handleFilterButton = async () => {
-    console.log('entrou')
-    const query = new URLSearchParams(searchState)
-    const fetchdata = await axios.get(import.meta.env.VITE_APIURL + '/arquivos?' + query, {
-      headers: {
-        'authorization': localStorage.getItem('token') as any
-      }
-    })
-    const data = await fetchdata.data
-    setFileList(data)
+  const handleDeleteUnidade = (id: any) => {
+    console.log(id)
   }
 
+  const FilterArea = () => {
 
-
-
-  useEffect(() => {
-    console.log(arqList)
-
-  }, [arqList])
-
-
-
-  useLayoutEffect(() => {
-    let newList: any = {}
-    if (searchState && searchState.hasOwnProperty("empreendimento")) {
-      newList = fileList.filter((file: any) => file.construtora.value === searchState.construtora
-        &&
-        file.empreendimento.value === searchState.empreendimento
-      )
-    } else {
-      newList = fileList.filter((file: any) => file.construtora.value === searchState.construtora)
-    }
-    setSearchList(newList)
-  }, [searchState])
+  }
 
   return (
-    <div className='contentContainer'>
-      <h2>Arquivos</h2>
-      <div className="filterArea">
-        <FilterArea state={searchState} setState={setSearchState} onPressFilter={() => { console.log(searchState) }} />
+    <div id="files" className='contentContainer '>
+      <h2>Lista de Arquivos para edição:</h2>
+      <div className='header'>
+        <FilterArea />
       </div>
-      <div className="filesWrapper">
-        {
-          arqList.isLoading ? <CircularProgress /> :
-            arqList.apiData.map((file: any) => (
-              <div className="file" key={file.id}>
-                <p><span>Nome: </span>{file.nomeArquivo.substring(0, 20)}</p>
-                <p><span>Empreendimento: </span>{file.empreendimento.label}</p>
-                <p><span>Construtora: </span>{file.construtora.label}</p>
-              </div>
-            ))
-        }
-        {/* {
-          (!searchState ? fileList : searchList).map((file: any) => (
-            <div className="file" key={file.id}>
-              <p><span>Nome: </span>{file.nomeArquivo.substring(0, 20)}</p>
-              <p><span>Empreendimento: </span>{file.empreendimento.label}</p>
-              <p><span>Construtora: </span>{file.construtora.label}</p>
-            </div>
-          ))
-        } */}
+      <div className='content'>
+        <table className='tabela' style={{ gridTemplateColumns: "repeat(5, 0.3fr)" }}>
+          <thead>
+            <tr>
+              <th>Nome Exibição</th>
+              <th>Empreendimento</th>
+              <th>Construtora</th>
+              <th>Acessos</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              arquivos.isLoading ?
+                <CircularProgress />
+                :
+                arquivos?.apiData.map((arquivo: any, index: number) => (
+                  <tr key={arquivo.id}>
+                    <td>
+                      {arquivo.nomeExibicao}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <p>{arquivo.empreendimento.nomeEmpreendimento}</p>
+                      </div>
+                    </td>
+                    <td>
+                      <p>{arquivo.empreendimento.construtora.nome}</p>
+                    </td>
+                    <td>
+                      <p>{arquivo.quantidadeDownload}</p>
+                    </td>
+                    <td>
+                      <>
+                        <Link to={`./${arquivo.id}`} state={arquivo}>
+                          <VisibilityIcon className="actionIcons green" />
+                        </Link>
+                        <p onClick={() => handleDeleteUnidade(arquivo.id)}>
+                          <DeleteIcon className="actionIcons red" />
+                        </p>
+                      </>
+                    </td>
+                  </tr>
+                ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <div className="footer">
+
       </div>
     </div>
-
-
   )
 }
 

@@ -5,8 +5,8 @@ export const ApiContext: any = createContext([])
 
 export const ApiContextBuilder = ({ children }: any) => {
 
-  const companies: any = useFetchData(import.meta.env.VITE_APIURL + "/construtoras/list")
-  const empreendimentos: any = useFetchData(import.meta.env.VITE_APIURL + "/empreendimentos")
+  const companies: any = useFetchData("/construtoras/list", "GET")
+  const empreendimentos: any = useFetchData("/empreendimentos", "GET")
 
 
   return (

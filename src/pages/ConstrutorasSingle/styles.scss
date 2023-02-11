@@ -5,13 +5,29 @@
   gap: 25px;
   width: 100%;
 
+  .buttonArea {
+    display: flex;
+    gap: 12px;
+  }
+
   .inputGroup {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    img {
+      max-width: 200px;
+      mix-blend-mode: color-burn;
+    }
+
+    label {
+      align-self: start;
+    }
 
     .inputSpan {
       font-size: 14px;
       color: gray;
     }
+
     input {
       height: 38px;
       min-height: 38px;

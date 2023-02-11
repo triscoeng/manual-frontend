@@ -74,10 +74,7 @@ const Construtoras = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [updateTrigger, setUpdateTrigger] = useState(false);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
-
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -210,16 +207,30 @@ const Construtoras = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      await axios
-        .delete(import.meta.env.VITE_APIURL + "/construtora/" + id, {
-          headers: {
-            authorization: localStorage.getItem("token") as any,
-          },
-        })
-        .then((r) => {
-          toast.success("Construtora deletada!");
-          setUpdateTrigger(!updateTrigger);
-        });
+      Swal.fire({
+        title: "Confirmação de Exclusão!",
+        icon: "question",
+        html: "Ao excluir este registo os arquivos <strong> também serão removidos.</strong> <br> Esta ação não poderá ser desfeita! Você tem certeza disto?",
+        confirmButtonText: "DELETAR",
+        confirmButtonColor: "red",
+        showCancelButton: true,
+        cancelButtonText: "CENCELAR",
+        cancelButtonColor: "gray",
+      }).then(async (r) => {
+        if (r.isConfirmed) {
+          await axios
+            .delete(import.meta.env.VITE_APIURL + "/construtoras/" + id, {
+              headers: {
+                authorization: localStorage.getItem("token") as any,
+              },
+            })
+            .then((r) => {
+              toast.success("Construtora deletada!");
+              setUpdateTrigger(!updateTrigger);
+            });
+        }
+      });
+
     } catch (error: any) {
       toast.error(error);
     }
@@ -293,7 +304,7 @@ const Construtoras = () => {
                 <TableCell align="center">{row.telefone}</TableCell>
                 <TableCell align="center">{row.email}</TableCell>
                 <TableCell align="center" >
-                  <Link to={`./${row.id}`}>
+                  <Link to={`./${row.id}`} state={row}>
                     <VisibilityIcon className="actionIcons green" />
                   </Link>
                   <Link onClick={() => handleDelete(row.id)} to={''}>

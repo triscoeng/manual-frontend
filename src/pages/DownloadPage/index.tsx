@@ -8,7 +8,7 @@ import "./styles.scss"
 
 const DownloadFileRoute = () => {
   const params = useParams();
-  const data: any = useFetchData(import.meta.env.VITE_APIURL + '/download?id=' + params.id)
+  const data: any = useFetchData('/download?id=' + params.id)
 
 
 

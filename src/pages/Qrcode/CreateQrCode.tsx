@@ -35,7 +35,7 @@ const CreateQrCode = () => {
   const [url, setUrl] = useState("");
 
   const [cadastroState, setCadastroState]: any = useState({ url: "" });
-  const companies: any = useFetchData(import.meta.env.VITE_APIURL + '/construtoras/list', 'GET')
+  const companies: any = useFetchData('/construtoras/list', 'GET')
   const layoutContext: any = useContext(LayoutContext)
 
   useEffect(() => {

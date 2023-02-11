@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useContext, useEffect, useState, useCallback } from "react";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { LayoutContext } from "../../context/LayoutContext";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,7 +23,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import "./styles.scss";
 
 import { Button } from "@mui/material";
-import { Preview } from "@mui/icons-material";
+import { ChevronLeft, ChevronLeftRounded, Preview, UploadFileRounded } from "@mui/icons-material";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -36,15 +36,17 @@ interface TablePaginationActionsProps {
 }
 
 const ConstrutorasSingle = (props: any) => {
-  const { id } = useParams();
+  const { state: construtoraData } = useLocation()
   const token: any = localStorage.getItem("token");
   const layoutContext: any = useContext(LayoutContext);
-  const [construtoraData, setConstrutoraData]: any = useState("init");
+
   const [editMode, setEditMode]: any = useState(true);
   const [editNewData, setEditNewData]: any = useState({});
   const [loading, setLoading]: any = useState(false);
 
-  const [rows, setRows] = useState([]);
+  const [imagePreview, setImagePreview] = useState()
+
+  const [rows, setRows] = useState(construtoraData.Empreendimentos);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -55,30 +57,79 @@ const ConstrutorasSingle = (props: any) => {
     }));
   };
 
-  const handleSaveEditButton: any = (value: any) => {
-    const queryData = { id: construtoraData.id, ...editNewData };
-    const token: any = localStorage.getItem("token");
-    if (Object.keys(editNewData).length > 0) {
-      try {
-        setLoading(true);
-        axios
-          .put(import.meta.env.VITE_APIURL + "/construtora/edit", queryData, {
-            headers: {
-              authorization: token,
-            },
-          })
-          .then((r) => {
-            toast.success("Registro atualizado com sucesso!");
-            setLoading(false);
-          })
-          .catch((error) => {
-            toast.error("Não foi possível atualizar o registro!");
-          });
-      } catch (err) {
-        setLoading(false);
-        toast.error("Não foi possível atualizar o registro!");
+  const convertToBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      if (!file) {
+        alert("Please select an image");
+      } else {
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
       }
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const handleImageConvert = useCallback(
+    async (e: any) => {
+      const file = e.target.files[0]
+      const base64: any = await convertToBase64(file);
+      setImagePreview(base64);
+      setEditNewData((prev: any) => (
+        {
+          ...prev,
+          image: file
+        }
+      ))
+      e.target.value = "";
+    },
+    []
+  )
+
+  const handleSaveEditButton: any = async (value: any) => {
+    const formData = new FormData()
+    formData.append('nome', construtoraData.nome)
+    for (const key in editNewData) {
+      formData.append(key, editNewData[key])
     }
+
+    const token: any = localStorage.getItem("token");
+
+    try {
+      await axios.patch(`${import.meta.env.VITE_APIURL}/construtoras/${construtoraData.id}`, formData, {
+        headers: {
+          'Authorization': token
+        }
+      })
+    } catch (error: any) {
+      toast.error(error.response.data)
+    }
+
+    // if (Object.keys(formData).length > 0) {
+    //   try {
+    //     setLoading(true);
+    //     await axios
+    //       .patch(import.meta.env.VITE_APIURL + "/construtoras/" + construtoraData.id, formData, {
+    //         headers: {
+    //           authorization: token,
+    //         },
+    //       })
+    //       .then((r) => {
+    //         toast.success("Registro atualizado com sucesso!");
+    //         setLoading(false);
+    //       })
+    //       .catch((error) => {
+    //         toast.error("Não foi possível atualizar o registro!");
+    //       });
+    //   } catch (err) {
+    //     setLoading(false);
+    //     toast.error("Não foi possível atualizar o registro!");
+    //   }
+    // }
   };
 
   function TablePaginationActions(props: TablePaginationActionsProps) {
@@ -132,41 +183,48 @@ const ConstrutorasSingle = (props: any) => {
     setPage(0);
   };
 
-  const getConstrutoraData = async () => {
-    try {
-      await axios
-        .get(import.meta.env.VITE_APIURL + "/construtora/" + id, {
-          headers: {
-            authorization: token,
-          },
-        })
-        .then((r) => {
-          setConstrutoraData(r.data);
-          setRows(r.data.Empreendimentos);
-          layoutContext.setNavbar_title("Dados da Construtora: " + r.data.nome);
-          setLoading(false);
-        });
-    } catch (error: any) {
-      toast.error(error.message);
-      setLoading(false);
-    }
-  };
+
+
   useEffect(() => {
-    return () => {
-      getConstrutoraData();
-    };
-  }, []);
+    layoutContext.setNavbar_title(`${!editMode ? "Edição" : "Dados"} da Construtora: ` + construtoraData.nome.toUpperCase());
+  }, [editMode]);
 
   return (
     <div className="construtora_single_wrapper">
       <div className="topWrapper">
+        <div className="buttonArea">
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<ChevronLeft />}
+            onClick={() => window.history.back()}
+          >
+            Voltar
+          </Button>
+          <Button
+            disabled={loading ? true : false}
+            variant={editMode ? "contained" : "outlined"}
+            startIcon={editMode ? <EditRoundedIcon /> : <SaveRoundedIcon />}
+            onClick={() => {
+              if (editMode) {
+                setEditMode(!editMode);
+              } else {
+                setEditMode(!editMode);
+                handleSaveEditButton();
+              }
+            }}
+          >
+            {editMode ? "Editar" : "Salvar"}
+          </Button>
+        </div>
         <div className="inputGroup">
           <p className="inputSpan">Nome da Construtora:</p>
           <input
+
             name="nome"
             type="text"
             defaultValue={construtoraData.nome}
-            disabled={editMode}
+            disabled={true}
             onChange={handleInputChange}
           />
         </div>
@@ -200,22 +258,27 @@ const ConstrutorasSingle = (props: any) => {
             disabled={editMode}
           />
         </div>
+        <div className="inputGroup">
+          <p className="inputSpan">Logo Construtora</p>
+          <Button
+            style={editMode ? { display: 'none' } : { display: 'inherit' }}
+            startIcon={<UploadFileRounded />}
+            variant="contained"
+            component="label"
+            onChange={handleImageConvert}
+          >
+            Logotipo da Empresa
+            <input
+              type="file"
+              name="image"
+              accept="image/*, png, jpeg, jpg"
+              hidden
+            />
+          </Button>
+          <img src={editNewData.image ? imagePreview : import.meta.env.VITE_APIURL + '/' + construtoraData.logo} alt="Logo Construtora" />
+        </div>
         {loading ? <CircularProgress /> : ""}
-        <Button
-          disabled={loading ? true : false}
-          variant={editMode ? "contained" : "outlined"}
-          startIcon={editMode ? <EditRoundedIcon /> : <SaveRoundedIcon />}
-          onClick={() => {
-            if (editMode) {
-              setEditMode(!editMode);
-            } else {
-              setEditMode(!editMode);
-              handleSaveEditButton();
-            }
-          }}
-        >
-          {editMode ? "Editar" : "Salvar"}
-        </Button>
+
       </div>
       <div className="mid">
         <div className="tableContainer">
@@ -242,9 +305,9 @@ const ConstrutorasSingle = (props: any) => {
             <TableBody>
               {(rowsPerPage > 0
                 ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
                 : rows
               ).map((row: any) => (
                 <TableRow key={row.id}>
@@ -296,7 +359,7 @@ const ConstrutorasSingle = (props: any) => {
         </div>
       </div>
       <div className="bot"></div>
-    </div>
+    </div >
   );
 };
 

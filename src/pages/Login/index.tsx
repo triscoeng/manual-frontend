@@ -1,4 +1,4 @@
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,8 @@ import "./login.scss";
 import logo from "../../components/images/secure_login.svg"
 
 const Login = () => {
-  const [usuario, setUsuario] = useState();
-  const [senha, setSenha] = useState();
+  const [usuario, setUsuario]: any = useState();
+  const [senha, setSenha]: any = useState();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -78,13 +78,16 @@ const Login = () => {
               isLoading ?
                 <CircularProgress />
                 :
-                <input
+                <Button
                   type="button"
                   value="Login"
+                  variant="contained"
                   onClick={() => {
                     loginUser();
                   }}
-                />
+                >
+                  Entrar
+                </Button>
             }
           </div>
         </div>

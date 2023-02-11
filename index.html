@@ -16,12 +16,8 @@
   </style>
   <style>
     * {
-      font-family: 'League Spartan', sans-serif
-    }
-
-    :where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
-      all: unset;
-      display: revert
+      font-family: 'League Spartan', sans-serif;
+      margin: 0;
     }
 
     *,
@@ -32,7 +28,8 @@
 
     a,
     button {
-      cursor: revert
+      cursor: revert;
+      text-decoration: none;
     }
 
     menu,

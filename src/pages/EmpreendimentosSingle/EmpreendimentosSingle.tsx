@@ -28,7 +28,7 @@ const EmpreendimentosSingle = () => {
   const [newFiles, setNewFiles] = useState([]);
 
   const apiDataContext: any = useContext(ApiContext)
-  const empData: any = useFetchData(import.meta.env.VITE_APIURL + '/empreendimento/' + idEmpreendimento)
+  const empData: any = useFetchData('/empreendimento/' + idEmpreendimento)
 
   useEffect(() => {
     console.log("🚀 ~ file: EmpreendimentosSingle.tsx ~ line 22 ~ EmpreendimentosSingle ~ loading", loading)

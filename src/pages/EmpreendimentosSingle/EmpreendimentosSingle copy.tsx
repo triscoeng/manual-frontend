@@ -27,7 +27,7 @@ const EmpreendimentosSingle = () => {
 
   const [newFiles, setNewFiles] = useState([]);
 
-  const empData = useFetchData(import.meta.env.VITE_APIURL + '/empreendimento/' + idEmpreendimento, 'GET')
+  const empData = useFetchData('/empreendimento/' + idEmpreendimento, 'GET')
 
   useEffect(() => {
     console.log(empData)

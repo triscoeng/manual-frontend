@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Button, FormControlLabel, FormGroup, TextField } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Button, CircularProgress, FormControlLabel, TextField } from '@mui/material'
 import axios from 'axios'
 import Select from "react-select"
 
 
 import './UnidadesForm.scss'
-import { AddCircleOutlineOutlined } from '@mui/icons-material'
+import { AddCircleOutlineOutlined, Attachment } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 
 export default function UnidadesForm() {
@@ -53,16 +53,24 @@ export default function UnidadesForm() {
     })
     dataForm.append('idEmpreendimento', empreendimentoSelected?.id)
     dataForm.append('nome', nomeUnidade)
-    dataForm.append('categoria', isPrivate ? parseInt(1) : parseInt(0))
+    dataForm.append('categoria', isPrivate ? 1 : 0)
 
     try {
+      setLoading(true)
       await axios.post(import.meta.env.VITE_APIURL + '/unidades', dataForm, {
         headers: {
           authorization: localStorage.getItem("token") as string,
         }
-      }).then((r) => console.log(r))
-    } catch (error) {
+      }).then((r) => {
+        if (r.data) {
+          toast.success("Unidade cadastrada com sucesso");
+          window.history.back()
+        }
+      })
+    } catch (error: any) {
       toast.error(error.response.data)
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -78,36 +86,54 @@ export default function UnidadesForm() {
     <div className="empreendimentosContainer">
       <h2>Cadastro de Unidade:</h2>
       <div>
-        {loading ? <p>carregando </p> :
+        {loading ? <CircularProgress /> :
           <form>
             <div className='form-group'>
               <FormControlLabel
+                className='subtitulo'
                 control={
                   <Select
+                    placeholder="Construtora"
+                    menuPortalTarget={document.body}
+                    id="construtora"
+                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                     name="idConstrutora"
                     isClearable={true}
                     options={construtorasList}
                     getOptionLabel={(v: any) => v.nome}
+                    getOptionValue={(v: any) => v.id}
                     onChange={(v: any) => {
-                      setConstrutoraSelected(v.id)
-                      setEmpByConstrutoraList(v.Empreendimentos)
+                      if (v) {
+                        setConstrutoraSelected(v.id)
+                        setEmpByConstrutoraList(v.Empreendimentos)
+                      } else {
+                        setConstrutoraSelected([])
+                        setEmpByConstrutoraList([])
+                        setEmpByConstrutoraList([])
+
+                      }
                     }}
                   />
                 }
                 label="Escolha a Construtora"
                 labelPlacement='top'
               />
-              {empByConstrutoraList &&
-                <FormControlLabel
-                  label="Empreendimentos:"
-                  labelPlacement='top'
-                  control={
-                    <Select
-                      name="idEmpreendimento"
-                      isClearable={true}
-                      options={empByConstrutoraList}
-                      getOptionLabel={(v: any) => v.nomeEmpreendimento}
-                      onChange={(v) => {
+              <FormControlLabel
+                className='subtitulo'
+                label="Empreendimentos"
+                labelPlacement='top'
+                control={
+                  <Select
+                    name="idEmpreendimento"
+                    placeholder="Empreendimento"
+                    isDisabled={!construtoraSelected ? true : false}
+                    id="empreendimento"
+                    isClearable={true}
+                    options={empByConstrutoraList}
+                    getOptionLabel={(v: any) => v.nomeEmpreendimento}
+                    value={empreendimentoSelected}
+                    onChange={(v) => {
+                      if (v) {
                         setEmpreendimentoSelected(v)
                         const arquivosFixed = v.Arquivos.map((file: any, index: any) => (
                           {
@@ -118,22 +144,27 @@ export default function UnidadesForm() {
                           }
                         ))
                         setArquivosList(arquivosFixed)
-                      }}
-                    />
-                  }
-                />
-              }
+                      } else {
+                        setEmpreendimentoSelected([])
+                        setArquivosList([])
+                      }
+                    }}
+                  />
+                }
+              />
             </div>
-            <div>
+            <div className='categoria-unidade'>
+              <p className="subtitulo">Usuário para a unidade:</p>
               <TextField
                 name="nomeUnidade"
                 variant="outlined"
                 label="Nome da Unidade"
+                style={{ backgroundColor: '#fff' }}
                 onChange={(e: any) => setNomeUnidade(e.target.value)}
               />
             </div>
-            <div >
-              <p>Categoria de Unidade:</p>
+            <div className='categoria-unidade'>
+              <p className="subtitulo">Categoria de Unidade:</p>
               <div className="checkbox-area">
                 <span className={!isPrivate ? '' : 'span-inactive'}>Padrão</span>
                 <input
@@ -161,19 +192,19 @@ export default function UnidadesForm() {
               </div>
             </div>
             <div>
-              <p>Arquivos Disponíveis:</p>
               <div className="files-area">
+                <p className="subtitulo">Arquivos Disponíveis:</p>
                 {
                   empreendimentoSelected && arquivosList.map((file: any, index: any): any => {
                     return (
-                      <div key={file.id} style={{ display: 'flex', alignItems: 'center' }}>
-                        <label htmlFor={`check-${index}`}>
+                      <div key={file.id}>
+                        <label htmlFor={`check-${index}`} className="files-item">
                           <input type="checkbox" id={`check-${index}`}
                             value={index}
                             onChange={handleCheckedChange}
                             checked={arquivosList[index].checked}
                           />
-                          {arquivosList[index].nomeExibicao}
+                          <span><Attachment style={{ color: arquivosList[index].checked ? '#597aff' : '#d1d1d1' }} /></span><p>{arquivosList[index].nomeExibicao}</p>
                         </label>
                       </div>
                     )
@@ -181,13 +212,16 @@ export default function UnidadesForm() {
                 }
               </div>
             </div>
-            <Button startIcon={<AddCircleOutlineOutlined />} variant="contained" color="success"
-              onClick={handleFormSubmit}>
-              CADASTRAR
-            </Button>
+            <div style={{ margin: '12px 0' }}>
+              <Button startIcon={<AddCircleOutlineOutlined />} variant="contained" color="success"
+                disabled={loading ? true : false}
+                onClick={handleFormSubmit}>
+                CADASTRAR
+              </Button>
+            </div>
           </form >
         }
-      </div>
+        </div>
     </div >
-  )
+      )
 }

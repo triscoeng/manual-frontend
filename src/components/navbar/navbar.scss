@@ -3,6 +3,9 @@
   background-color: #00104e;
   display: flex;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 99;
 
   .navbar-container {
     width: 100%;

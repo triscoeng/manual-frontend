@@ -1,15 +1,12 @@
 import { AccountTree, ContactPhone, HomeMini, House, MenuBook, RoomPreferences, WorkspacePremium } from '@mui/icons-material'
+import axios from 'axios'
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
 import pdfLogo from '../../components/images/pdf-ico.png'
+import useFetchData from '../../utils/useFetchData'
 import useWindowDimensions from '../../utils/useWindowDim'
 import './paginadousuario.scss'
-
-
-
-
-
 
 interface iData {
   data: {
@@ -98,7 +95,8 @@ export default function PaginaDoUsuario({ data }: iData) {
         <h3>Downloads</h3>
         <div className="fileArea">
           {arquivos.map((arquivo: any) => (
-            <a href={`${import.meta.env.VITE_APIURL}/${arquivo.urlArquivo}`}>
+            // <a href={`${import.meta.env.VITE_APIURL}/${arquivo.urlArquivo}`}>
+            <a onClick={(e) => handleDownloadFileClick(e, arquivo.id)}>
               <div className='fileNode' key={arquivo.id}>
                 <img src={pdfLogo} alt="pdf icon logo" />
                 <p>{arquivo.nomeExibicao}</p>
@@ -139,6 +137,12 @@ export default function PaginaDoUsuario({ data }: iData) {
   }
 
 
+  const handleDownloadFileClick = async (e: any, i: string) => {
+    e.preventDefault()
+    const { data: { urlArquivo } } = await axios.get(`${import.meta.env.VITE_APIURL}/arquivo/${i}`)
+    window.location.href = import.meta.env.VITE_APIURL + "/" + urlArquivo
+  }
+
   function getContent(v: string): any {
     switch (v) {
       case 'manual':
@@ -156,6 +160,7 @@ export default function PaginaDoUsuario({ data }: iData) {
   return (
     <div className="paginadousuario_container">
       <header>
+        <span className='construtora_logo'><img src={`${import.meta.env.VITE_APIURL}/${data.empreendimento.construtora.logo}`} alt="" /></span>
         <img src="/images/logo-trisco-white.png" alt="Trisco Icone" />
       </header>
       <div className='main'>

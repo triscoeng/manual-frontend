@@ -50,12 +50,16 @@ const ConstrutorasSingle = (props: any) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditNewData((prev: any) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEditNewData((prev: any) => ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      }));
+    },
+    [],
+  )
+
 
   const convertToBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
@@ -92,7 +96,6 @@ const ConstrutorasSingle = (props: any) => {
 
   const handleSaveEditButton: any = async (value: any) => {
     const formData = new FormData()
-    formData.append('nome', construtoraData.nome)
     for (const key in editNewData) {
       formData.append(key, editNewData[key])
     }
@@ -220,11 +223,10 @@ const ConstrutorasSingle = (props: any) => {
         <div className="inputGroup">
           <p className="inputSpan">Nome da Construtora:</p>
           <input
-
             name="nome"
             type="text"
             defaultValue={construtoraData.nome}
-            disabled={true}
+            disabled={editMode}
             onChange={handleInputChange}
           />
         </div>

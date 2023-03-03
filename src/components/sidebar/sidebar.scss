@@ -2,6 +2,7 @@
   border-right: 0.5px solid #fff;
   min-width: 180px;
 
+
   hr {
     display: none;
     border: 0.25px solid rgb(230, 227, 227);
@@ -13,6 +14,10 @@
     align-items: center;
     justify-content: center;
     background-color: #00104e;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+
 
     .logo {
       img {

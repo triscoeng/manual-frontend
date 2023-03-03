@@ -23,11 +23,21 @@
     span {
       font-weight: 600;
     }
-    
+
     .badge {
       background-color: #999;
       padding: 4px;
       border-radius: 4px;
+    }
+  }
+
+  .inputUrl {
+    height: 1.4375em;
+    padding: 16.5px 14px;
+    width: 100%;
+
+    &::placeholder {
+      color: #a1a1a1
     }
   }
 }

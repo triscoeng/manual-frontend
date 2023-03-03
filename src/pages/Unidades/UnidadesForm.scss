@@ -1,3 +1,10 @@
+.filterArea {
+  margin: 12px 0;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  padding: 12px;
+}
+
 .subtitulo {
   font-weight: 600;
   color: #00104e
@@ -143,13 +150,19 @@
     color: white;
   }
 
-  th:last-child {
+  th:nth-child(1) {
+    border-top-left-radius: 8px;
     border: 0;
   }
 
+  th:last-child {
+    border: 0;
+    border-top-right-radius: 8px;
+  }
+
   td {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     color: #707070;
     display: flex;
     justify-content: center;
@@ -159,6 +172,13 @@
 
   tr:nth-child(even) td {
     background: #f8f6ff;
+  }
+
+  .qrcode-wrapper {
+    canvas {
+      max-width: 50px;
+      height: auto;
+    }
   }
 
   .badge {
@@ -307,4 +327,10 @@
 .checkbox-wrapper {
   display: flex;
   align-items: center;
+}
+
+.footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
 }

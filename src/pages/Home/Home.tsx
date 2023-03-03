@@ -12,7 +12,7 @@ const Home = () => {
     layoutContext.setNavbar_title("Trisco Engenharia - Administração de QR Codes ");
     return () => { };
   }, []);
-  const { apiData, isLoading }: any = useFetchData('/home', 'GET')
+  const { data: apiData, isLoading }: any = useFetchData('/home')
 
   return (
     <div className="cardContainer">

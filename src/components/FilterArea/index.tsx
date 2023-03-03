@@ -9,7 +9,7 @@ import './styles.scss';
 export function FilterArea({ setState, state, onPressFilter }: any) {
 
   const [empreendimentoList, setEmpreendimentoList]: any = useState();
-  const companies: any = useFetchData('/construtoras/list', 'get', {})
+  const companies: any = useFetchData('/construtoras/list')
 
   const location = useLocation().pathname
   // const { state: tempFilesArray } = { state }

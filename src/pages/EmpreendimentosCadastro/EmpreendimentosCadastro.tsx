@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import Select from "react-select"
 import useFetchData from "../../utils/useFetchData";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import FilePresentIcon from "@mui/icons-material/FilePresent";
@@ -17,26 +17,32 @@ import ImageIcon from '@mui/icons-material/Image';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import "./styles.scss";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { SaveOutlined } from "@mui/icons-material";
+import { LayoutContext } from "../../context/LayoutContext";
 
 const EmpreendimentosCadastro = () => {
-  const { state: editModeData } = useLocation()
+  let { state: editModeData } = useLocation()
+  // let { data: editModeData, isLoading, refresh, isError, isSuccess } = useFetchData(`/empreendimento/${id}`)
   const [editMode, setEditMode] = useState(editModeData ? true : false)
-  const construtoraData: any = useFetchData('/construtoras/list', 'GET')
+
+  const construtoraData: any = useFetchData('/construtoras/list')
+  const [isLoading, setIsLoading] = useState(false);
+  const [image, setImage]: any = useState();
 
   const [formState, setFormState]: any = useState(editMode ?
     {
       ...editModeData
     }
-    : {})
+    : {}
+  )
 
-  const [removeFiles, setRemoveFiles]: any = useState([])
-  const [uploadedFiles, setUploadedFiles]: any = useState(editMode ? editModeData.Arquivos : []);
+  const [editState, setEditState] = useState({})
+
+  const [removeFiles, setRemoveFiles]: any = useState()
+  // const [uploadedFiles, setUploadedFiles]: any = useState(editMode ? editModeData.Arquivos : []);
   const [fileLimit, setFileLimit] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const [image, setImage]: any = useState();
 
 
   const handleSubmitRequest = async (data: any) => {
@@ -44,7 +50,6 @@ const EmpreendimentosCadastro = () => {
     //   console.log(pair[0] + ', ' + pair[1]);
     // }
     setIsLoading(true);
-
     switch (editMode) {
       case true:
         console.log("MODO EDIT")
@@ -89,15 +94,17 @@ const EmpreendimentosCadastro = () => {
   const handleSubmitEvent = async (e: any) => {
     e.preventDefault()
     const formData = new FormData();
-    { editMode ? formData.append("idEmpreendimento", editModeData.id) : null }
-    { editMode ? formData.append("removeFile[]", JSON.stringify(removeFiles)) : null }
-    formData.append("idConstrutora", formState.idConstrutora);
-    formData.append("nomeEmpreendimento", formState.nomeEmpreendimento);
-    formData.append("cep", formState.cep);
-    if (formState.logo) {
-      formData.append('logo', formState.logo)
+    formData.append("idConstrutora", editMode ? editModeData.idConstrutora : formState.idConstrutora);
+    formData.append("id", editMode ? editModeData.id : formState.id);
+    formData.append("nomeEmpreendimento", editMode ? editModeData.nomeEmpreendimento : formState.nomeEmpreendimento);
+    formData.append("cep", editMode ? editModeData.cep : formState.cep);
+    { editMode ? formData.append("Arquivos[]", JSON.stringify(editModeData.Arquivos)) : null }
+    if (image) {
+      formData.append("logo", formState.logo)
+    } else {
+      formData.append("logo", editMode ? editModeData.logo : '');
     }
-    if (formState.Arquivos.length > 0) {
+    if (formState.Arquivos?.length > 0) {
       for (var file of formState.Arquivos) {
         if (file instanceof File) {
           formData.append('manuais', file, file.name)
@@ -122,12 +129,7 @@ const EmpreendimentosCadastro = () => {
     const newArray = [...formState.Arquivos];
     newArray.splice(indexFile, 1);
     if (editMode) {
-      setRemoveFiles((prev: any) => (
-        [
-          ...prev,
-          { id: file.id, path: file.urlArquivo }
-        ]
-      ))
+      editModeData.Arquivos = newArray
     }
     setFormState((prev: any) => (
       {
@@ -195,35 +197,60 @@ const EmpreendimentosCadastro = () => {
   )
 
   const handleInputChangeValue = useCallback((e: any) => {
-    setFormState((prev: any) => {
-      return (
-        {
-          ...prev,
-          [e.target.id]: e.target.value
-        }
-      )
-    })
+    if (!editMode) {
+      setFormState((prev: any) => {
+        return (
+          {
+            ...prev,
+            [e.target.id]: e.target.value
+          }
+        )
+      })
+    }
+    else {
+      editModeData[e.target.id] = e.target.value
+    }
   }, [])
 
+  const handleInputSelectChange = (e: any, opt: any) => {
+    switch (opt.action) {
+      case 'select-option':
+        setFormState((prev: any) => ({
+          ...prev,
+          [opt.name]: e.value
+        }))
+        break;
+    }
+  }
+  const layoutContext: any = useContext(LayoutContext)
 
   useEffect(() => {
-    console.log(formState.Arquivos)
-  }, [formState])
+    editMode ?
+      layoutContext.setNavbar_title(`Tela de Edição do Empreendimento: ${editModeData.nomeEmpreendimento}`)
+      :
+      layoutContext.setNavbar_title(`Tela de Cadastro de Empreendimento`)
+  }, [])
+
+  useEffect(() => {
+    console.log(editModeData)
+  }, [editModeData])
+
 
   return (
     <div className="contentContainer">
       <h2>Cadastro de Empreendimento:</h2>
       <div className="tableContainer">
         {
-          construtoraData.isLoading ?
+          (construtoraData.isLoading) ?
             <CircularProgress />
             :
             <form action="#" encType="multipart/form-data">
               <FormControl fullWidth sx={{ m: 1 }}>
                 <Select
-                  isDisabled={editModeData ? true : false}
-                  options={construtoraData.apiData}
-                  defaultValue={editModeData ? construtoraData.apiData.filter((v: any) => v.value === editModeData.idConstrutora) : null}
+                  isDisabled={editMode ? true : false}
+                  name="idConstrutora"
+                  options={construtoraData.data}
+                  defaultValue={editMode ? construtoraData?.data.filter((v: any) => v.value === editModeData.idConstrutora) : null}
                   placeholder="Escolha a Construtora"
                   styles={{
                     valueContainer: () => (
@@ -247,7 +274,7 @@ const EmpreendimentosCadastro = () => {
                       }
                     }
                   }}
-                  onChange={(opt: any) => setFormState((prev: any) => ({ ...prev, idConstrutora: opt.value }))}
+                  onChange={(e, opt) => handleInputSelectChange(e, opt)}
                 />
               </FormControl>
               <FormControl fullWidth sx={{ m: 1 }} variant="filled">
@@ -255,10 +282,10 @@ const EmpreendimentosCadastro = () => {
                   Nome do Empreendimento
                 </InputLabel>
                 <FilledInput
-                  disabled={editMode ? true : false}
                   id="nomeEmpreendimento"
                   defaultValue={editMode ? editModeData.nomeEmpreendimento : null}
                   onChange={handleInputChangeValue}
+                  onFocus={(e) => console.log({ [e.target.id]: e.target.value })}
                 />
               </FormControl>
               <FormControl fullWidth sx={{ m: 1 }} variant="filled">
@@ -271,22 +298,26 @@ const EmpreendimentosCadastro = () => {
               </FormControl>
               <div className="imageArea">
                 <p>Selecione o logo do empreendimento:
-                  <span>(Ele será usado na criação do QRCode, caso não haja será utilizado o logo da construtora.)</span>
                 </p>
-                {image || formState.logo ?
+                {(image || editModeData?.logo) ?
                   <div className="imageArea_inner">
                     <span>
                       <ClearIcon className="fileIconDelete" onClick={() => {
                         setImage(null)
-                        setFormState((prev: any) => (
-                          {
-                            ...prev,
-                            logo: null
-                          }
-                        ))
+                        if (!editMode) {
+                          setFormState((prev: any) => (
+                            {
+                              ...prev,
+                              logo: ''
+                            }
+                          ))
+                        } else {
+                          console.log(editModeData)
+                          editModeData.logo = ''
+                        }
                       }} />
                     </span>
-                    <img src={image ? image.base : import.meta.env.VITE_APIURL + '/' + formState.logo} className="image" />
+                    <img src={image ? image.base : `${import.meta.env.VITE_APIURL}/${formState.logo}`} className="image" />
                   </div>
                   :
                   <Button

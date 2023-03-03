@@ -4,9 +4,41 @@
     margin: 12px 0;
     border-radius: 4px;
     background-color: #f1f1f1;
+
+    .filter-arquivos-area {
+      display: flex;
+      gap: 12px;
+      padding: 12px
+    }
+  }
+
+  .nomeExibicao[type=text] {
+
+    height: 2rem;
+    padding: 12px;
+    border-radius: 4px;
+
+    &:focus {
+      background-color: #f1f1f1;
+      border-color: green;
+    }
+
+    &:disabled {
+      border: none;
+      background-color: inherit;
+    }
+  }
+
+  .blue {
+    background-color: rgb(65, 147, 255)
   }
 
   .content {}
 
-  .footer {}
+  .footer {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    padding-top: 12px
+  }
 }

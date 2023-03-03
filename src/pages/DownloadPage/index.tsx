@@ -8,23 +8,33 @@ import "./styles.scss"
 
 const DownloadFileRoute = () => {
   const params = useParams();
-  const data: any = useFetchData('/download?id=' + params.id)
+  const { data, isLoading } = useFetchData('/download?id=' + params.id)
 
 
+  const handleClickDownload = (e: any) => {
+    e.preventDefault()
+
+    data.arquivo.length > 0 ?
+      window.location.href = `${import.meta.env.VITE_APIURL}/${data.apiData.arquivo[0].urlArquivo}`
+      :
+      window.location.href = data.apiData.qrCode.url
+  }
 
   useEffect(() => {
-
-    if (!data.isLoading && data.apiData.categoria !== 1) {
-      window.location.href = `${import.meta.env.VITE_APIURL}/${data.apiData.arquivo[0].urlArquivo}`
+    if (!isLoading && data.categoria !== 1) {
+      data.arquivo.length > 0
+        ?
+        window.location.href = `${import.meta.env.VITE_APIURL}/${data.arquivo[0].urlArquivo}`
+        :
+        window.location.href = data.qrCode.url
     }
-
   }, [data])
 
 
   return (
     <>
       {
-        data.isLoading ?
+        isLoading ?
           <div className="downloadWrapper">
             <div className="innerWrapper">
               <div className="content">
@@ -41,9 +51,9 @@ const DownloadFileRoute = () => {
             </div>
           </div>
           :
-          data.apiData.categoria
+          data.categoria
             ?
-            <PaginaDoUsuario data={data.apiData} />
+            <PaginaDoUsuario data={data} />
             :
             <div className="downloadWrapper">
               <div className="innerWrapper">
@@ -56,7 +66,7 @@ const DownloadFileRoute = () => {
                   </div>
                   <div className="counter">
                     <Button variant="contained" color="success"
-                      onClick={() => window.location.href = `${import.meta.env.VITE_APIURL}/${data.apiData.arquivo[0].urlArquivo}`}
+                      onClick={handleClickDownload}
                     >
                       Baixar Arquivo
                     </Button>

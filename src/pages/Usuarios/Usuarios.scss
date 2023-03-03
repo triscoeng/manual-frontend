@@ -1,15 +1,56 @@
-.empreendimentosContainer {
+.cadastro {
+  display: flex;
+  flex-direction: column;
+  margin: 12px 0;
+  padding: 12px;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  gap: 12px;
+
+
+
+  h3 {
+    padding-left: 12px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 0;
+    transition: max-height 1s ease-in;
+  }
+
+  form.open {
+    height: fit-content;
+  }
+
+  input {
+    height: 2rem;
+  }
+
+  .cadastro-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  gap: 12px;
 
   table {
     display: grid;
+    grid-template-columns: repeat(4, auto);
     border-collapse: collapse;
     min-width: 100%;
-    grid-template-columns:
-      minmax(150px, 1fr) 
-      minmax(150px, 1.67fr) 
-      minmax(150px, 1.67fr) 
-      minmax(150px, 1.67fr)
-      minmax(150px, 1.67fr)
   }
 
   thead,
@@ -34,6 +75,7 @@
     font-size: 1.1rem;
     color: white;
   }
+
   th:nth-child(1) {
     border-top-left-radius: 8px;
   }
@@ -55,28 +97,9 @@
   tr:nth-child(even) td {
     background: #f8f6ff;
   }
+}
 
-  img {
-    max-width: 100px;
-    height: auto;
-    mix-blend-mode: multiply;
-  }
+.footer {
+  padding: 12px 0;
 
-  .green {
-    background-color: #6dc75e;
-  }
-
-  .yellow {
-    background-color: #ffee4a;
-  }
-
-  .red {
-    background-color: #d6675a;
-  }
-
-  .footer {
-    
-    display: flex;
-    justify-content: center;
-  }
 }

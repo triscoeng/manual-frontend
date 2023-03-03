@@ -1,18 +1,14 @@
 import { useEffect } from "react";
 import QRCodeStyling from "qr-code-styling";
-import { EditRounded, SaveRounded } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { SaveRounded } from "@mui/icons-material";
 
 import "./QrCodeGenerator.scss"
 
 const QrCodeGenerator = ({ data }: any) => {
-
-  console.log(data)
-  const navigate = useNavigate()
   const qrCode = new QRCodeStyling({
     width: 1024,
     height: 1024,
-    image: import.meta.env.VITE_APIURL + "/" + data.rest.empreendimento.construtora.logo,
+    // image: data.rest.empreendimento.construtora.logo ? import.meta.env.VITE_APIURL + "/" + data.rest.empreendimento.construtora.logo : '',
     data: import.meta.env.VITE_PUBLIC_URL + '/qrcode/' + data.id,
     margin: 0,
     qrOptions: {
@@ -26,17 +22,14 @@ const QrCodeGenerator = ({ data }: any) => {
     },
     dotsOptions: {
       type: "extra-rounded",
-      color: "#0001a4",
     },
     backgroundOptions: {
       color: "#ffffff",
     },
     cornersSquareOptions: {
       type: "extra-rounded",
-      color: "#000066",
     },
     cornersDotOptions: {
-      color: "#000066",
     },
   });
 
@@ -49,7 +42,7 @@ const QrCodeGenerator = ({ data }: any) => {
     <div id={data.id} className="qrCode">
       <span onClick={() => {
         qrCode.download({
-          name: "QRCODE_" + data.url,
+          name: "QRCODE_" + data.id,
           extension: "jpeg"
         })
       }}>
